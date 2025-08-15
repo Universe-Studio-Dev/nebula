@@ -1,0 +1,16 @@
+announcements:
+  welcome:
+    interval: 60
+    messages:
+      - "&aWelcome to the server, %player%!"
+      - "&aEnjoy your stay!"
+  website:
+    interval: 120
+    messages:
+      - "&bCheck out our website for news and updates!"
+      - "&bVisit us at www.universestudio.com!"
+  discord:
+    interval: 180
+    messages:
+      - "&eJoin our Discord, %player%!"
+      - "&eFind community events at discord.gg/UniverseStudio!"
