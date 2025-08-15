@@ -1,0 +1,13 @@
+# Main configuration for the Nebula
+settings:
+  debug: false
+  language: en
+stream:
+  cooldown: 300000
+  format:
+    - "&7&l~~~~~~~~~~~~~~~~~~~~"
+    - "%platform_color%%platform_icon% &l%platform%"
+    - "%platform_color%%player% &f is streaming on %platform_color%%platform%"
+    - "%platform_color%%link%"
+    - "&7&l~~~~~~~~~~~~~~~~~~~~"
+  link-hover: "&eClick to open the link"

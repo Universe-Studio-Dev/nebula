@@ -1,0 +1,15 @@
+messages:
+  prefix: "&7[&bNebula&7] "
+  no-console: "&cThis command cannot be used from console!"
+  no-permission: "&cThe command does not exist!"
+
+  invalid-usage: "&cInvalid usage. Check /nebula help."
+  invalid-interval: "&cInvalid interval. Please provide a number."
+
+  announcement-added: "&aAnnouncement %name% added successfully!"
+  announcement-not-found: "&cAnnouncement %name% not found."
+  announcement-removed: "&aAnnouncement %name% removed successfully!"
+
+  stream-cooldown: "&cYou must wait %time% before using this command again."
+  stream-usage: "&cUsage: /stream <link>"
+  stream-invalid-platform: "&cPlatform not supported. Use a Twitch, Kick, or YouTube link."

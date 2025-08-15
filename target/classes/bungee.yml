@@ -1,0 +1,4 @@
+name: Nebula
+version: '1.0-SNAPSHOT'
+main: github.universe.studio.nebula.Nebula
+author: Universe Studio

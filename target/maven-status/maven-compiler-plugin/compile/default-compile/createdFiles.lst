@@ -1,0 +1,7 @@
+github\universe\studio\nebula\listeners\Announcer.class
+github\universe\studio\nebula\utils\ConfigManager.class
+github\universe\studio\nebula\commands\NebulaCommand.class
+github\universe\studio\nebula\utils\CC.class
+github\universe\studio\nebula\Nebula.class
+github\universe\studio\nebula\commands\StreamCommand.class
+github\universe\studio\nebula\listeners\PlatformDetector.class
