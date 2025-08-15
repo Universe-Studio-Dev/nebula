@@ -1,0 +1,4 @@
+name: Nebula
+version: '${version}'
+main: github.universe.studio.nebula.Nebula
+author: Universe Studio
