@@ -1,8 +1,7 @@
 messages:
   prefix: "&7[&bNebula&7] "
   no-console: "&cThis command cannot be used from console!"
-  no-permission: "&cThe command does not exist!"
-
+  no-permission: "&cYou do not have permission to use this command!"
   invalid-usage: "&cInvalid usage. Check /nebula help."
   invalid-interval: "&cInvalid interval. Please provide a number."
 
@@ -14,8 +13,21 @@ messages:
   stream-usage: "&cUsage: /stream <link>"
   stream-invalid-platform: "&cPlatform not supported. Use a Twitch, Kick, or YouTube link."
 
-  staffchat-on: "&aStaffChat activado."
-  staffchat-off: "&cStaffChat desactivado."
+  staffchat-on: "&aStaffChat enabled. Your messages will be sent only to staff."
+  staffchat-off: "&aStaffChat disabled. You now chat normally on your server."
   staffchat-format: "&c[StaffChat] &8(%server%) &7%player%: &f%message%"
-  staff-join: "&e%player% &7se ha conectado al servidor &e%server%"
-  staff-leave: "&e%player% &7se ha desconectado"
+  staff-join: "&e%player% &7has joined the server &e%server%"
+  staff-leave: "&e%player% &7has disconnected"
+
+  report-usage: "&cUsage: /report <player> <message>"
+  report-sent: "&aReport sent against &f%reported_player%: &f%message%"
+  report-received:
+    - "<GRADIENT:FF0000>[Report]</GRADIENT:FF5555>"
+    - "&7Player: %player% &8(%server%)"
+    - "&7Message: &f%message%"
+  helpop-usage: "&cUsage: /helpop <message>"
+  helpop-sent: "&aHelp request sent: &f%message%"
+  helpop-received:
+    - "<GRADIENT:0000FF>[Helpop]</GRADIENT:5555FF>"
+    - "&7Player: %player% &8(%server%)"
+    - "&7Message: &f%message%"
