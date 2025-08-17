@@ -33,6 +33,13 @@ messages:
     - "&7Player: %player% &8(%server%)"
     - "&7Message: &f%message%"
 
+maintenance:
+  kick: "&cThe Network is currently in &4&lMaintenance &cof Universe Studio
+  &cCheck out the updates on discord &4&lhttps://discord.gg/HpuzmHY3"
+  maintenance-usage: "&cUso: /maintenance <on|off>"
+  maintenance-on: "&cMaintenance mode activated."
+  maintenance-off: "&aMaintenance mode disabled."
+
 message:
   usage: "&cCorrect usage: /msg <player> <message>"
   not-found: "&cThat player is not online."

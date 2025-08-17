@@ -2,11 +2,13 @@ package github.universe.studio.nebula;
 
 import github.universe.studio.nebula.commands.player.HelpopCommand;
 import github.universe.studio.nebula.commands.NebulaCommand;
+import github.universe.studio.nebula.commands.player.HubCommand;
 import github.universe.studio.nebula.commands.player.ReportCommand;
 import github.universe.studio.nebula.commands.StreamCommand;
 import github.universe.studio.nebula.commands.message.MsgCommand;
 import github.universe.studio.nebula.commands.message.ReplyCommand;
 import github.universe.studio.nebula.commands.staff.BlacklistCommand;
+import github.universe.studio.nebula.commands.staff.MaintenanceCommand;
 import github.universe.studio.nebula.commands.staff.StaffChatCommand;
 import github.universe.studio.nebula.listeners.Announcer;
 import github.universe.studio.nebula.listeners.GeneralListeners;
@@ -55,10 +57,12 @@ public final class Nebula extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new MsgCommand());
         getProxy().getPluginManager().registerCommand(this, new ReplyCommand());
         getProxy().getPluginManager().registerCommand(this, new BlacklistCommand());
+        getProxy().getPluginManager().registerCommand(this, new NebulaCommand());
+        getProxy().getPluginManager().registerCommand(this, new MaintenanceCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new HubCommand(this));
         getProxy().getPluginManager().registerCommand(this, new ReportCommand(this));
         getProxy().getPluginManager().registerCommand(this, new HelpopCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, staffChatListener));
-        getProxy().getPluginManager().registerCommand(this, new NebulaCommand());
         getProxy().getPluginManager().registerCommand(this, new StreamCommand(this));
     }
 

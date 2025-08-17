@@ -34,10 +34,19 @@ public class MotdListener implements Listener {
             return;
         }
 
-        String line1 = config.getString("motd.line1", "   &7◇ <GRADIENT:00FF00>&lUNIVERSE STUDIO DEVELOPMENT</GRADIENT:FFFF00>!&7 ◇");
-        String line2 = config.getString("motd.line2", "&3%event_name% &fen &b%countdown%");
-        String eventName = config.getString("motd.event_name", "https://discord.gg/jGKm94fMAk");
-        String eventDateStr = config.getString("motd.event_date", LocalDateTime.now().plusDays(1).toString());
+        if (config.getBoolean("maintenance", false)) {
+            String line1 = config.getString("motd.maintenance.line1");
+            String line2 = config.getString("motd.maintenance.line2");
+
+            String motd = CC.translate(line1) + "\n" + CC.translate(line2);
+            event.getResponse().setDescription(motd);
+            return;
+        }
+
+        String line1 = config.getString("motd.normal.line1");
+        String line2 = config.getString("motd.normal.line2");
+        String eventName = config.getString("motd.normal.event_name");
+        String eventDateStr = config.getString("motd.normal.event_date", LocalDateTime.now().plusDays(1).toString());
 
         LocalDateTime now = LocalDateTime.now();
         LocalDateTime target;
@@ -77,7 +86,6 @@ public class MotdListener implements Listener {
                 .replace("%online%", String.valueOf(online)));
 
         String motd = line1 + "\n" + line2;
-
         event.getResponse().setDescription(motd);
     }
 }

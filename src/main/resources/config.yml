@@ -1,7 +1,10 @@
-hub-servers:
+hub:
   - "Lobby"
   - "Lobby2"
   - "Lobby3"
+hub-kick: "&aYou have been redirected to the %hub% because the previous server has shut down."
+
+maintenance: false
 
 stream:
   cooldown: 300000
@@ -17,7 +20,11 @@ blacklist: {}
 
 motd:
   enabled: true
-  line1: "   &7◇ <GRADIENT:00FF00>&lUNIVERSE STUDIO DEVELOPMENT</GRADIENT:FFFF00>!&7 ◇"
-  line2: "&3%event_name% &fen &b%countdown%"
-  event_name: "https://discord.gg/jGKm94fMAk"
-  event_date: "2025-08-17T12:00:00"
+  normal:
+    line1: "   &7◇ <GRADIENT:00FF00>&lUNIVERSE STUDIO DEVELOPMENT</GRADIENT:FFFF00>!&7 ◇"
+    line2: "&3%event_name% &fen &b%countdown%"
+    event_name: "https://discord.gg/jGKm94fMAk"
+    event_date: "2025-08-17T12:00:00"
+  maintenance:
+    line1: "&c&lMAINTENANCE MODE ENABLED"
+    line2: "&7Please try again later."
