@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
  * @file Announcer
  */
 public class Announcer {
+
     private final Nebula plugin;
     private final List<ScheduledTask> tasks = new ArrayList<>();
 
@@ -42,7 +43,7 @@ public class Announcer {
                 String message = messages.get(currentIndex[0]);
                 for (ProxiedPlayer player : ProxyServer.getInstance().getPlayers()) {
                     String formattedMessage = message.replace("%player%", player.getName());
-                    player.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.prefix") + formattedMessage));
+                    player.sendMessage(CC.translate(formattedMessage));
                 }
                 currentIndex[0] = (currentIndex[0] + 1) % messages.size();
             }, 0, interval, TimeUnit.SECONDS);
