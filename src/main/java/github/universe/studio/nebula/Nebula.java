@@ -2,7 +2,9 @@ package github.universe.studio.nebula;
 
 import github.universe.studio.nebula.commands.NebulaCommand;
 import github.universe.studio.nebula.commands.StreamCommand;
+import github.universe.studio.nebula.commands.staff.StaffChatCommand;
 import github.universe.studio.nebula.listeners.Announcer;
+import github.universe.studio.nebula.listeners.StaffChatListener;
 import github.universe.studio.nebula.utils.CC;
 import github.universe.studio.nebula.utils.ConfigManager;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -14,9 +16,11 @@ import net.md_5.bungee.api.plugin.Plugin;
  * @file Nebula
  */
 public final class Nebula extends Plugin {
+
     private static Nebula instance;
     private ConfigManager configManager;
     private Announcer announcer;
+    private StaffChatListener staffChatListener;
 
     @Override
     public void onEnable() {
@@ -35,13 +39,16 @@ public final class Nebula extends Plugin {
         configManager.load();
         announcer = new Announcer(this);
         announcer.start();
+
+        staffChatListener = new StaffChatListener(this);
+        getProxy().getPluginManager().registerListener(this, staffChatListener);
+        getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, staffChatListener));
         getProxy().getPluginManager().registerCommand(this, new NebulaCommand());
         getProxy().getPluginManager().registerCommand(this, new StreamCommand(this));
     }
 
     @Override
     public void onDisable() {
-
         CC.console("&b&lNEBULA &7⇨ &fProxyCore");
         CC.console("        &c&lDISABLED");
         CC.console(" &7⇨ &fVersion: &b" + getDescription().getVersion());
@@ -64,5 +71,9 @@ public final class Nebula extends Plugin {
 
     public Announcer getAnnouncer() {
         return announcer;
+    }
+
+    public StaffChatListener getStaffChatListener() {
+        return staffChatListener;
     }
 }

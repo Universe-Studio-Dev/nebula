@@ -11,6 +11,7 @@ import java.util.regex.Pattern;
  * @file PlatformDetector
  */
 public class PlatformDetector {
+
     public String detectPlatform(String link) {
         if (Pattern.compile(".*twitch\\.tv.*", Pattern.CASE_INSENSITIVE).matcher(link).matches()) {
             return "Twitch";

@@ -23,6 +23,7 @@ import java.util.List;
  * @file StreamCommand
  */
 public class StreamCommand extends Command {
+
     private final Plugin plugin;
     private final PlatformDetector platformDetector;
     private final HashMap<String, Long> cooldowns;
