@@ -1,5 +1,8 @@
-settings:
-  debug: false
+hub-servers:
+  - "Lobby"
+  - "Lobby2"
+  - "Lobby3"
+
 stream:
   cooldown: 300000
   format:

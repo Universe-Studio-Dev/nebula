@@ -1,5 +1,6 @@
 messages:
   prefix: "&7[&bNebula&7] "
+  only-players: "&cThis command can only be used by players."
   no-console: "&cThis command cannot be used from console!"
   no-permission: "&cYou do not have permission to use this command!"
   invalid-usage: "&cInvalid usage. Check /nebula help."
@@ -43,6 +44,12 @@ reply:
   no-reply: "&cYou have no one to answer to."
   to-sender: "%sender% -> %target%: %message%"
   to-target: "%sender% -> %target%: %message%"
+
+hub:
+  no-hubs: "&cNo hay servidores de hub configurados."
+  hub-not-found: "&cEl servidor de hub %hub% no está disponible."
+  already-in-hub: "&eYa estás en un hub."
+  sending-hub: "&aEnviándote al hub %hub%..."
 
 blacklist:
   usage-add: "&cUsage: /blacklist add <player> <reason>"

@@ -1,4 +1,4 @@
-package github.universe.studio.nebula.commands;
+package github.universe.studio.nebula.commands.player;
 
 import github.universe.studio.nebula.Nebula;
 import github.universe.studio.nebula.utils.CC;
@@ -15,14 +15,14 @@ import java.util.List;
  * @author DanielH131COL
  * @created 16/08/2025
  * @project nebula
- * @file HelpopCommand
+ * @file ReportCommand
  */
-public class HelpopCommand extends Command {
+public class ReportCommand extends Command {
 
     private final Nebula plugin;
 
-    public HelpopCommand(Nebula plugin) {
-        super("helpop", null, "ayuda");
+    public ReportCommand(Nebula plugin) {
+        super("report", null, "reporte");
         this.plugin = plugin;
     }
 
@@ -35,22 +35,25 @@ public class HelpopCommand extends Command {
 
         ProxiedPlayer player = (ProxiedPlayer) sender;
 
-        if (args.length < 1) {
-            player.sendMessage(new TextComponent(CC.translate(ConfigManager.getMessages().getString("messages.helpop-usage"))));
+        if (args.length < 2) {
+            player.sendMessage(new TextComponent(CC.translate(ConfigManager.getMessages().getString("messages.report-usage"))));
             return;
         }
 
-        String message = String.join(" ", args);
+        String reportedPlayer = args[0];
+        String message = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
         String server = player.getServer() != null ? player.getServer().getInfo().getName() : "Unknown";
 
-        String playerMessage = CC.translate(ConfigManager.getMessages().getString("messages.helpop-sent")
+        String playerMessage = CC.translate(ConfigManager.getMessages().getString("messages.report-sent")
+                .replace("%reported_player%", reportedPlayer)
                 .replace("%message%", message));
         player.sendMessage(new TextComponent(playerMessage));
 
-        List<String> staffMessages = ConfigManager.getMessages().getStringList("messages.helpop-received");
+        List<String> staffMessages = ConfigManager.getMessages().getStringList("messages.report-received");
         TextComponent staffText = new TextComponent();
         for (String line : staffMessages) {
             String formattedLine = CC.translate(line.replace("%player%", player.getName())
+                    .replace("%reported_player%", reportedPlayer)
                     .replace("%server%", server)
                     .replace("%message%", message));
             TextComponent lineComponent = new TextComponent(formattedLine + "\n");

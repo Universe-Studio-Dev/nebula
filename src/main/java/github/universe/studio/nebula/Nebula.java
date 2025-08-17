@@ -1,8 +1,8 @@
 package github.universe.studio.nebula;
 
-import github.universe.studio.nebula.commands.HelpopCommand;
+import github.universe.studio.nebula.commands.player.HelpopCommand;
 import github.universe.studio.nebula.commands.NebulaCommand;
-import github.universe.studio.nebula.commands.ReportCommand;
+import github.universe.studio.nebula.commands.player.ReportCommand;
 import github.universe.studio.nebula.commands.StreamCommand;
 import github.universe.studio.nebula.commands.message.MsgCommand;
 import github.universe.studio.nebula.commands.message.ReplyCommand;
