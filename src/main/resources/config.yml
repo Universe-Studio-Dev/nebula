@@ -9,3 +9,10 @@ stream:
     - "%platform_color%%link%"
     - "&7&l~~~~~~~~~~~~~~~~~~~~"
   link-hover: "&eClick to open the link"
+
+motd:
+  enabled: true
+  line1: "   &7◇ <GRADIENT:00FF00>&lUNIVERSE STUDIO DEVELOPMENT</GRADIENT:FFFF00>!&7 ◇"
+  line2: "&3%event_name% &fen &b%countdown%"
+  event_name: "https://discord.gg/jGKm94fMAk"
+  event_date: "2025-08-17T12:00:00"

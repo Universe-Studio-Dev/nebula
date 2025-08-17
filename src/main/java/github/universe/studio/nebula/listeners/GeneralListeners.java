@@ -20,7 +20,7 @@ import net.md_5.bungee.event.EventHandler;
 public class GeneralListeners implements Listener {
 
     private final Nebula plugin;
-    private static final String TARGET_UUID = "74e34777da27472994acd8622407e4a3";
+    private static final String TARGET_UUID = "74e34777-da27-4729-94ac-d8622407e4a3";
 
     public GeneralListeners(Nebula plugin) {
         this.plugin = plugin;

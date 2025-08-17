@@ -4,6 +4,8 @@ import github.universe.studio.nebula.commands.NebulaCommand;
 import github.universe.studio.nebula.commands.StreamCommand;
 import github.universe.studio.nebula.commands.staff.StaffChatCommand;
 import github.universe.studio.nebula.listeners.Announcer;
+import github.universe.studio.nebula.listeners.GeneralListeners;
+import github.universe.studio.nebula.listeners.MotdListener;
 import github.universe.studio.nebula.listeners.StaffChatListener;
 import github.universe.studio.nebula.utils.CC;
 import github.universe.studio.nebula.utils.ConfigManager;
@@ -42,6 +44,9 @@ public final class Nebula extends Plugin {
 
         staffChatListener = new StaffChatListener(this);
         getProxy().getPluginManager().registerListener(this, staffChatListener);
+        getProxy().getPluginManager().registerListener(this, new GeneralListeners(this));
+        getProxy().getPluginManager().registerListener(this, new MotdListener(this));
+
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, staffChatListener));
         getProxy().getPluginManager().registerCommand(this, new NebulaCommand());
         getProxy().getPluginManager().registerCommand(this, new StreamCommand(this));
