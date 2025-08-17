@@ -4,6 +4,7 @@ import github.universe.studio.nebula.commands.HelpopCommand;
 import github.universe.studio.nebula.commands.NebulaCommand;
 import github.universe.studio.nebula.commands.ReportCommand;
 import github.universe.studio.nebula.commands.StreamCommand;
+import github.universe.studio.nebula.commands.staff.BlacklistCommand;
 import github.universe.studio.nebula.commands.staff.StaffChatCommand;
 import github.universe.studio.nebula.listeners.Announcer;
 import github.universe.studio.nebula.listeners.GeneralListeners;
@@ -49,6 +50,7 @@ public final class Nebula extends Plugin {
         getProxy().getPluginManager().registerListener(this, new GeneralListeners(this));
         getProxy().getPluginManager().registerListener(this, new MotdListener(this));
 
+        getProxy().getPluginManager().registerCommand(this, new BlacklistCommand());
         getProxy().getPluginManager().registerCommand(this, new ReportCommand(this));
         getProxy().getPluginManager().registerCommand(this, new HelpopCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, staffChatListener));

@@ -10,6 +10,8 @@ stream:
     - "&7&l~~~~~~~~~~~~~~~~~~~~"
   link-hover: "&eClick to open the link"
 
+blacklist: {}
+
 motd:
   enabled: true
   line1: "   &7◇ <GRADIENT:00FF00>&lUNIVERSE STUDIO DEVELOPMENT</GRADIENT:FFFF00>!&7 ◇"

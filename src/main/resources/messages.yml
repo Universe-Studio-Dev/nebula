@@ -31,3 +31,14 @@ messages:
     - "<GRADIENT:0000FF>[Helpop]</GRADIENT:5555FF>"
     - "&7Player: %player% &8(%server%)"
     - "&7Message: &f%message%"
+
+blacklist:
+  usage-add: "&cUsage: /blacklist add <player> <reason>"
+  usage-remove: "&cUsage: /blacklist remove <player>"
+  no-reason: "&cPlease specify a reason."
+  added: "&aPlayer &f%player% &ahas been blacklisted for: &f%reason%"
+  removed: "&aPlayer &f%player% &ahas been removed from the blacklist."
+  already-removed: "&cThat player is not in the blacklist."
+  broadcast-add: "&8[&cAlert&8] &f%player% &chas been &fblacklisted &7(%reason%)"
+  broadcast-remove: "&8[&aAlert&8] &f%player% &ahas been removed from the blacklist."
+  kick-message: "&cYou are blacklisted from this server.\n&7Reason: &f%reason%"

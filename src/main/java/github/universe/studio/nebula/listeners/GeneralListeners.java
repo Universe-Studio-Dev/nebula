@@ -5,7 +5,9 @@ import github.universe.studio.nebula.utils.CC;
 import github.universe.studio.nebula.utils.ConfigManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.LoginEvent;
 import net.md_5.bungee.api.event.PlayerDisconnectEvent;
 import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.plugin.Listener;
@@ -63,6 +65,20 @@ public class GeneralListeners implements Listener {
                     onlinePlayer.sendMessage(message);
                 }
             }
+        }
+    }
+
+    @EventHandler
+    public void onLogin(LoginEvent event) {
+        String name = event.getConnection().getName().toLowerCase();
+
+        if (ConfigManager.getConfig().contains("blacklist." + name)) {
+            String reason = ConfigManager.getConfig().getString("blacklist." + name);
+
+            event.setCancelReason(TextComponent.fromLegacyText(CC.translate(
+                    ConfigManager.getMessages().getString("blacklist.kick-message")
+                            .replace("%reason%", reason))));
+            event.setCancelled(true);
         }
     }
 }
