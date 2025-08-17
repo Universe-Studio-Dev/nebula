@@ -17,6 +17,7 @@ import java.util.List;
  * @file NebulaCommand
  */
 public class NebulaCommand extends Command {
+
     public NebulaCommand() {
         super("nebula", "nebula.admin", "n");
     }
@@ -38,7 +39,7 @@ public class NebulaCommand extends Command {
                 Nebula.getConfigManager().load();
                 Nebula.getInstance().getAnnouncer().stop();
                 Nebula.getInstance().getAnnouncer().start();
-                sender.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.reloaded")));
+                sender.sendMessage(CC.translate("&aFiles reloaded successfully."));
                 break;
             case "info":
                 sender.sendMessage(CC.translate("&b&lNEBULA"));
