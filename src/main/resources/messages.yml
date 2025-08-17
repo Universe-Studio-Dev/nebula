@@ -17,3 +17,5 @@ messages:
   staffchat-on: "&aStaffChat activado."
   staffchat-off: "&cStaffChat desactivado."
   staffchat-format: "&c[StaffChat] &8(%server%) &7%player%: &f%message%"
+  staff-join: "&e%player% &7se ha conectado al servidor &e%server%"
+  staff-leave: "&e%player% &7se ha desconectado"
