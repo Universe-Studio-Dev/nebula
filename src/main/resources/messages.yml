@@ -32,6 +32,18 @@ messages:
     - "&7Player: %player% &8(%server%)"
     - "&7Message: &f%message%"
 
+message:
+  usage: "&cCorrect usage: /msg <player> <message>"
+  not-found: "&cThat player is not online."
+  to-sender: "%sender% -> %target%: %message%"
+  to-target: "%sender% -> %target%: %message%"
+
+reply:
+  usage: "&cCorrect usage: /r <mensaje>"
+  no-reply: "&cYou have no one to answer to."
+  to-sender: "%sender% -> %target%: %message%"
+  to-target: "%sender% -> %target%: %message%"
+
 blacklist:
   usage-add: "&cUsage: /blacklist add <player> <reason>"
   usage-remove: "&cUsage: /blacklist remove <player>"

@@ -17,6 +17,11 @@
       <option name="url" value="https://nexus.iridiumdevelopment.net/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="yworks-releases" />
+      <option name="name" value="yworks-releases" />
+      <option name="url" value="https://repo.yworks.com/maven2" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="central" />
       <option name="name" value="Maven Central repository" />
       <option name="url" value="https://repo1.maven.org/maven2" />
