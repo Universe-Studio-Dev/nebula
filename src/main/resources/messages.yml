@@ -5,6 +5,7 @@ messages:
   no-permission: "&cYou do not have permission to use this command!"
   invalid-usage: "&cInvalid usage. Check /nebula help."
   invalid-interval: "&cInvalid interval. Please provide a number."
+  ping: "&bPing: &f&l%ping% &bms."
 
   announcement-added: "&aAnnouncement %name% added successfully!"
   announcement-not-found: "&cAnnouncement %name% not found."
@@ -68,3 +69,19 @@ blacklist:
   broadcast-add: "&8[&cAlert&8] &f%player% &chas been &fblacklisted &7(%reason%)"
   broadcast-remove: "&8[&aAlert&8] &f%player% &ahas been removed from the blacklist."
   kick-message: "&cYou are blacklisted from this server.\n&7Reason: &f%reason%"
+
+info:
+  usage: "&cCorrect usage: /info <player>"
+  no-online: "&cThat player is not online."
+  format:
+    - "&8&m------------------------------------"
+    - "<GRADIENT:00B7FF>&lPlayer Information</GRADIENT:477C91>"
+    - "&f  Name: &7{player}"
+    - "&f  UUID: &7{uuid}"
+    - "&f  IP: &7{ip}"
+    - "&f  Country: &7{country}"
+    - "&f  Current Server: &7{server}"
+    - "&f  Ping: &7{ping} ms"
+    - "&f  Client: &7{client}"
+    - "&f  Connected from: &7{time}"
+    - "&8&m------------------------------------"
