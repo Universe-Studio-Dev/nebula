@@ -3,6 +3,7 @@ package github.universe.studio.nebula.listeners;
 import github.universe.studio.nebula.Nebula;
 import github.universe.studio.nebula.utils.CC;
 import github.universe.studio.nebula.utils.ConfigManager;
+import github.universe.studio.nebula.utils.ConnectionTracker;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -60,6 +61,11 @@ public class GeneralListeners implements Listener {
                 }
             }
         }
+    }
+
+    @EventHandler
+    public void onJoin(PostLoginEvent event) {
+        ConnectionTracker.setLoginTime(event.getPlayer().getUniqueId());
     }
 
     @EventHandler
