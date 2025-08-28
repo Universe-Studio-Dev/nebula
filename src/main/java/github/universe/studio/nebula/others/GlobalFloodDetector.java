@@ -1,4 +1,4 @@
-package github.universe.studio.nebula.antibots;
+package github.universe.studio.nebula.others;
 
 import java.util.LinkedList;
 import java.util.Queue;

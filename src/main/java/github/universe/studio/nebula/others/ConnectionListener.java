@@ -1,4 +1,4 @@
-package github.universe.studio.nebula.antibots;
+package github.universe.studio.nebula.others;
 
 import github.universe.studio.nebula.utils.CC;
 import net.md_5.bungee.api.event.LoginEvent;

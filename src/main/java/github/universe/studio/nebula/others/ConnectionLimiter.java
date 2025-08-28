@@ -1,4 +1,4 @@
-package github.universe.studio.nebula.antibots;
+package github.universe.studio.nebula.others;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

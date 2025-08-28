@@ -1,4 +1,4 @@
-package github.universe.studio.nebula.antibots;
+package github.universe.studio.nebula.others;
 
 /**
  * @author DanielH131COL

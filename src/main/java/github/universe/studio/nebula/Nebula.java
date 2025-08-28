@@ -1,6 +1,6 @@
 package github.universe.studio.nebula;
 
-import github.universe.studio.nebula.antibots.*;
+import github.universe.studio.nebula.others.*;
 import github.universe.studio.nebula.commands.player.HelpopCommand;
 import github.universe.studio.nebula.commands.NebulaCommand;
 import github.universe.studio.nebula.commands.player.HubCommand;
