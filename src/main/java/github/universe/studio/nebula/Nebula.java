@@ -1,5 +1,6 @@
 package github.universe.studio.nebula;
 
+import github.universe.studio.nebula.antibots.*;
 import github.universe.studio.nebula.commands.player.HelpopCommand;
 import github.universe.studio.nebula.commands.NebulaCommand;
 import github.universe.studio.nebula.commands.player.HubCommand;
@@ -12,10 +13,7 @@ import github.universe.studio.nebula.commands.staff.BlacklistCommand;
 import github.universe.studio.nebula.commands.staff.InfoCommand;
 import github.universe.studio.nebula.commands.staff.MaintenanceCommand;
 import github.universe.studio.nebula.commands.staff.StaffChatCommand;
-import github.universe.studio.nebula.listeners.Announcer;
-import github.universe.studio.nebula.listeners.GeneralListeners;
-import github.universe.studio.nebula.listeners.MotdListener;
-import github.universe.studio.nebula.listeners.StaffChatListener;
+import github.universe.studio.nebula.listeners.*;
 import github.universe.studio.nebula.utils.CC;
 import github.universe.studio.nebula.utils.ConfigManager;
 import net.md_5.bungee.api.plugin.Plugin;
@@ -32,6 +30,10 @@ public final class Nebula extends Plugin {
     private ConfigManager configManager;
     private Announcer announcer;
     private StaffChatListener staffChatListener;
+    private ConnectionLimiter connectionLimiter;
+    private GlobalFloodDetector floodDetector;
+    private BlacklistManager blacklistManager;
+    private NameValidator nameValidator;
 
     @Override
     public void onEnable() {
@@ -51,6 +53,13 @@ public final class Nebula extends Plugin {
         configManager.load();
         announcer = new Announcer(this);
         announcer.start();
+
+        connectionLimiter = new ConnectionLimiter(3000);
+        floodDetector = new GlobalFloodDetector(50, 5000);
+        blacklistManager = new BlacklistManager(5 * 60 * 1000);
+        nameValidator = new NameValidator();
+
+        getProxy().getPluginManager().registerListener(this, new ConnectionListener(this, connectionLimiter, floodDetector, blacklistManager, nameValidator));
 
         staffChatListener = new StaffChatListener(this);
         getProxy().getPluginManager().registerListener(this, staffChatListener);
@@ -99,5 +108,9 @@ public final class Nebula extends Plugin {
 
     public StaffChatListener getStaffChatListener() {
         return staffChatListener;
+    }
+
+    public GlobalFloodDetector getFloodDetector() {
+        return floodDetector;
     }
 }

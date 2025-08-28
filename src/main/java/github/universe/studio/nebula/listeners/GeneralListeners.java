@@ -9,14 +9,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.PendingConnection;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
-import net.md_5.bungee.api.event.LoginEvent;
-import net.md_5.bungee.api.event.PlayerDisconnectEvent;
-import net.md_5.bungee.api.event.PostLoginEvent;
-import net.md_5.bungee.api.event.ServerKickEvent;
+import net.md_5.bungee.api.event.*;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 /**
@@ -27,6 +26,8 @@ import java.util.Random;
  */
 public class GeneralListeners implements Listener {
 
+    private final Map<String, Long> lastPing = new HashMap<>();
+    private final int delay = 2000;
     private final Nebula plugin;
     private final Random random = new Random();
     private static final String TARGET_UUID = "74e34777-da27-4729-94ac-d8622407e4a3";
@@ -115,5 +116,16 @@ public class GeneralListeners implements Listener {
             String msg = ConfigManager.getConfig().getString("hub-kick");
             player.sendMessage(TextComponent.fromLegacyText(CC.translate(msg).replace("%hub%", hubName)));
         }
+    }
+
+    @EventHandler
+    public void onPing(ProxyPingEvent e) {
+        String ip = e.getConnection().getAddress().getAddress().getHostAddress();
+        long now = System.currentTimeMillis();
+
+        if (lastPing.containsKey(ip) && now - lastPing.get(ip) < delay) {
+            e.getResponse().setDescription("§cPing blocked by AntiBot");
+        }
+        lastPing.put(ip, now);
     }
 }
