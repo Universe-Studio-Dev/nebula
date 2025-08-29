@@ -4,6 +4,11 @@ hub:
   - "Lobby3"
 hub-kick: "&aYou have been redirected to the %hub% because the previous server has shut down."
 
+captcha:
+  enabled: true
+  server: "captcha"
+  lobby: "lobby"
+
 maintenance: false
 
 stream:

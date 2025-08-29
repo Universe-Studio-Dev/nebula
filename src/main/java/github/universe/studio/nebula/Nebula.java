@@ -34,6 +34,7 @@ public final class Nebula extends Plugin {
     private GlobalFloodDetector floodDetector;
     private BlacklistManager blacklistManager;
     private NameValidator nameValidator;
+    private CaptchaManager captchaManager;
 
     @Override
     public void onEnable() {
@@ -58,6 +59,11 @@ public final class Nebula extends Plugin {
         floodDetector = new GlobalFloodDetector(50, 5000);
         blacklistManager = new BlacklistManager(5 * 60 * 1000);
         nameValidator = new NameValidator();
+
+        boolean captchaEnabled = getConfigManager().getConfig().getBoolean("captcha.enabled", true);
+        String captchaServer = getConfigManager().getConfig().getString("captcha.server");
+        String lobbyServer = getConfigManager().getConfig().getString("captcha.lobby");
+        captchaManager = new CaptchaManager(captchaEnabled, captchaServer, lobbyServer);
 
         getProxy().getPluginManager().registerListener(this, new ConnectionListener(this, connectionLimiter, floodDetector, blacklistManager, nameValidator));
 
