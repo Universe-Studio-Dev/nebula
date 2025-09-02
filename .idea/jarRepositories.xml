@@ -17,6 +17,11 @@
       <option name="url" value="https://nexus.iridiumdevelopment.net/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="papermc-repo" />
+      <option name="name" value="papermc-repo" />
+      <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="yworks-releases" />
       <option name="name" value="yworks-releases" />
       <option name="url" value="https://repo.yworks.com/maven2" />
