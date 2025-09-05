@@ -1,4 +1,4 @@
 name: Nebula
 version: '${version}'
-main: github.universe.studio.nebula.Nebula
+main: github.universe.studio.nebula.bungee.BungeePlugin
 author: Universe Studio
