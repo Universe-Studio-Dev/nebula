@@ -17,7 +17,7 @@ import java.nio.file.Files;
  * @file ConfigManager
  */
 public class ConfigManager {
-    private static Configuration config, messages, announcements;
+    private static Configuration config, messages, announcements, friends;
     private final BungeePlugin plugin;
 
     public ConfigManager(BungeePlugin plugin) {
@@ -29,6 +29,7 @@ public class ConfigManager {
             config = loadFile("config.yml");
             messages = loadFile("messages.yml");
             announcements = loadFile("announcements.yml");
+            friends = loadFile("friends.yml");
         } catch (IOException e) {
             plugin.getLogger().severe("Error loading configs: " + e.getMessage());
         }
@@ -39,7 +40,11 @@ public class ConfigManager {
         if (!file.exists()) {
             plugin.getDataFolder().mkdirs();
             try (InputStream in = plugin.getResourceAsStream(name)) {
-                Files.copy(in, file.toPath());
+                if (in != null) {
+                    Files.copy(in, file.toPath());
+                } else {
+                    file.createNewFile();
+                }
             }
         }
         return ConfigurationProvider.getProvider(YamlConfiguration.class).load(file);
@@ -55,6 +60,10 @@ public class ConfigManager {
 
     public void saveAnnouncements() {
         saveFile(announcements, "announcements.yml");
+    }
+
+    public void saveFriends() {
+        saveFile(friends, "friends.yml");
     }
 
     private void saveFile(Configuration cfg, String name) {
@@ -75,5 +84,9 @@ public class ConfigManager {
 
     public static Configuration getAnnouncements() {
         return announcements;
+    }
+
+    public static Configuration getFriends() {
+        return friends;
     }
 }

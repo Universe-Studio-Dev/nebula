@@ -1,9 +1,7 @@
 package github.universe.studio.nebula.bungee;
 
 import github.universe.studio.nebula.Nebula;
-import github.universe.studio.nebula.bungee.BungeePlugin;
-import github.universe.studio.nebula.bungee.commands.NebulaCommand;
-import github.universe.studio.nebula.bungee.commands.StreamCommand;
+import github.universe.studio.nebula.bungee.commands.*;
 import github.universe.studio.nebula.bungee.commands.message.MsgCommand;
 import github.universe.studio.nebula.bungee.commands.message.ReplyCommand;
 import github.universe.studio.nebula.bungee.commands.player.HelpopCommand;
@@ -14,10 +12,7 @@ import github.universe.studio.nebula.bungee.commands.staff.BlacklistCommand;
 import github.universe.studio.nebula.bungee.commands.staff.InfoCommand;
 import github.universe.studio.nebula.bungee.commands.staff.MaintenanceCommand;
 import github.universe.studio.nebula.bungee.commands.staff.StaffChatCommand;
-import github.universe.studio.nebula.bungee.listeners.Announcer;
-import github.universe.studio.nebula.bungee.listeners.GeneralListeners;
-import github.universe.studio.nebula.bungee.listeners.MotdListener;
-import github.universe.studio.nebula.bungee.listeners.StaffChatListener;
+import github.universe.studio.nebula.bungee.listeners.*;
 import github.universe.studio.nebula.bungee.others.*;
 import github.universe.studio.nebula.bungee.utils.CC;
 import github.universe.studio.nebula.bungee.utils.ConfigManager;
@@ -25,11 +20,10 @@ import net.md_5.bungee.api.plugin.Plugin;
 
 /**
  * @author DanielH131COL
- * @created 4/09/2025
+ * @created 04/09/2025
  * @project nebula
- * @file bungee
+ * @file BungeePlugin
  */
-
 public class BungeePlugin extends Plugin {
 
     private static BungeePlugin instance;
@@ -41,6 +35,7 @@ public class BungeePlugin extends Plugin {
     private BlacklistManager blacklistManager;
     private NameValidator nameValidator;
     private CaptchaManager captchaManager;
+    private FriendManager friendManager;
 
     @Override
     public void onEnable() {
@@ -66,18 +61,20 @@ public class BungeePlugin extends Plugin {
         floodDetector = new GlobalFloodDetector(50, 5000);
         blacklistManager = new BlacklistManager(5 * 60 * 1000);
         nameValidator = new NameValidator();
-
-        boolean captchaEnabled = getConfigManager().getConfig().getBoolean("captcha.enabled", true);
-        String captchaServer = getConfigManager().getConfig().getString("captcha.server");
-        String lobbyServer = getConfigManager().getConfig().getString("captcha.lobby");
-        captchaManager = new CaptchaManager(captchaEnabled, captchaServer, lobbyServer);
+        captchaManager = new CaptchaManager(
+                configManager.getConfig().getBoolean("captcha.enabled", true),
+                configManager.getConfig().getString("captcha.server", "captcha"),
+                configManager.getConfig().getString("captcha.lobby", "lobby")
+        );
+        friendManager = new FriendManager(configManager);
+        friendManager.loadFriends();
 
         getProxy().getPluginManager().registerListener(this, new ConnectionListener(this, connectionLimiter, floodDetector, blacklistManager, nameValidator));
-
-        staffChatListener = new StaffChatListener(this);
-        getProxy().getPluginManager().registerListener(this, staffChatListener);
+        getProxy().getPluginManager().registerListener(this, new ChatCaptchaListener(captchaManager));
+        getProxy().getPluginManager().registerListener(this, staffChatListener = new StaffChatListener(this));
         getProxy().getPluginManager().registerListener(this, new GeneralListeners(this));
         getProxy().getPluginManager().registerListener(this, new MotdListener(this));
+        getProxy().getPluginManager().registerListener(this, new FriendListener(friendManager));
 
         getProxy().getPluginManager().registerCommand(this, new MsgCommand());
         getProxy().getPluginManager().registerCommand(this, new ReplyCommand());
@@ -91,6 +88,7 @@ public class BungeePlugin extends Plugin {
         getProxy().getPluginManager().registerCommand(this, new HelpopCommand(this));
         getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, staffChatListener));
         getProxy().getPluginManager().registerCommand(this, new StreamCommand(this));
+        getProxy().getPluginManager().registerCommand(this, new FriendCommand(friendManager));
     }
 
     @Override
@@ -104,6 +102,7 @@ public class BungeePlugin extends Plugin {
         configManager.saveConfig();
         configManager.saveMessages();
         configManager.saveAnnouncements();
+        configManager.saveFriends();
         announcer.stop();
     }
 
@@ -125,5 +124,9 @@ public class BungeePlugin extends Plugin {
 
     public GlobalFloodDetector getFloodDetector() {
         return floodDetector;
+    }
+
+    public FriendManager getFriendManager() {
+        return friendManager;
     }
 }

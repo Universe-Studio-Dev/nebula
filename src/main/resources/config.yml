@@ -9,6 +9,10 @@ captcha:
   server: "captcha"
   lobby: "lobby"
 
+friend:
+  notify-connect: true
+  notify-disconnect: true
+
 maintenance: false
 
 stream:
