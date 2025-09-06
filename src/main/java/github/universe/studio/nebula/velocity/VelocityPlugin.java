@@ -64,8 +64,18 @@ public class VelocityPlugin {
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Nebula.initVelocity(this);
-
         CC cc = new CC(server);
+        
+        logger.info(CC.translate("&b&lNEBULA &7⇨ &fProxyCore"));
+        logger.info(CC.translate("        &a&lENABLED"));
+        logger.info(CC.translate(" &7⇨ &fVersion: &b1.4"));
+        logger.info(CC.translate(" &7⇨ &fAuthor: &bUniverse Studio"));
+        logger.info(CC.translate(" &7⇨ &fDiscord: &bhttps://discord.gg/jGKm94fMAk"));
+        logger.info(CC.translate(""));
+        logger.info(CC.translate(" &bThis plugin will be free until a limited version,"));
+        logger.info(CC.translate(" &bso take advantage."));
+        logger.info(CC.translate(""));
+        
         announcer = new Announcer(this, server, cc);
         staffChatListener = new StaffChatListener(this, server, cc);
         GeneralListeners generalListeners = new GeneralListeners(this, server, cc, pluginContainer);
@@ -90,7 +100,6 @@ public class VelocityPlugin {
         commandManager.register(commandManager.metaBuilder("sc").aliases("staffchat").build(), new StaffChatCommand(this, staffChatListener));
         commandManager.register(commandManager.metaBuilder("nebula").aliases("n").build(), new NebulaCommand(this, server, announcer, pluginContainer));
         commandManager.register(commandManager.metaBuilder("stream").build(), new StreamCommand(this, server));
-
-        logger.info("Nebula plugin enabled successfully.");
+        
     }
 }
