@@ -21,10 +21,13 @@ import github.universe.studio.nebula.velocity.commands.staff.InfoCommand;
 import github.universe.studio.nebula.velocity.commands.staff.MaintenanceCommand;
 import github.universe.studio.nebula.velocity.commands.staff.StaffChatCommand;
 import github.universe.studio.nebula.velocity.listeners.Announcer;
+import github.universe.studio.nebula.velocity.listeners.FriendListener;
 import github.universe.studio.nebula.velocity.listeners.GeneralListeners;
 import github.universe.studio.nebula.velocity.listeners.MotdListener;
 import github.universe.studio.nebula.velocity.listeners.StaffChatListener;
+import github.universe.studio.nebula.velocity.others.FriendManager;
 import github.universe.studio.nebula.velocity.utils.CC;
+import github.universe.studio.nebula.velocity.utils.ConfigManager;
 import org.slf4j.Logger;
 
 import java.nio.file.Path;
@@ -44,6 +47,8 @@ public class VelocityPlugin {
     private final Path dataDirectory;
     private Announcer announcer;
     private StaffChatListener staffChatListener;
+    private FriendManager friendManager;
+    private ConfigManager configManager;
 
     @Inject
     public VelocityPlugin(ProxyServer server, Logger logger, PluginContainer pluginContainer, @DataDirectory Path dataDirectory) {
@@ -65,7 +70,10 @@ public class VelocityPlugin {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Nebula.initVelocity(this);
         CC cc = new CC(server);
-        
+        configManager = new ConfigManager();
+        ConfigManager.init(this);
+        ConfigManager.load();
+
         logger.info(CC.translate("&b&lNEBULA &7⇨ &fProxyCore"));
         logger.info(CC.translate("        &a&lENABLED"));
         logger.info(CC.translate(" &7⇨ &fVersion: &b1.4"));
@@ -75,16 +83,20 @@ public class VelocityPlugin {
         logger.info(CC.translate(" &bThis plugin will be free until a limited version,"));
         logger.info(CC.translate(" &bso take advantage."));
         logger.info(CC.translate(""));
-        
+
         announcer = new Announcer(this, server, cc);
         staffChatListener = new StaffChatListener(this, server, cc);
+        friendManager = new FriendManager(configManager, server);
         GeneralListeners generalListeners = new GeneralListeners(this, server, cc, pluginContainer);
         MotdListener motdListener = new MotdListener(this, server, cc);
+        FriendListener friendListener = new FriendListener(friendManager);
 
         server.getEventManager().register(this, generalListeners);
         server.getEventManager().register(this, motdListener);
         server.getEventManager().register(this, staffChatListener);
+        server.getEventManager().register(this, friendListener);
 
+        friendManager.loadFriends();
         announcer.start();
 
         CommandManager commandManager = server.getCommandManager();
@@ -100,6 +112,6 @@ public class VelocityPlugin {
         commandManager.register(commandManager.metaBuilder("sc").aliases("staffchat").build(), new StaffChatCommand(this, staffChatListener));
         commandManager.register(commandManager.metaBuilder("nebula").aliases("n").build(), new NebulaCommand(this, server, announcer, pluginContainer));
         commandManager.register(commandManager.metaBuilder("stream").build(), new StreamCommand(this, server));
-        
+        commandManager.register(commandManager.metaBuilder("friend").aliases("friends", "amigos", "amigo", "frd").build(), new FriendCommand(friendManager, server));
     }
 }

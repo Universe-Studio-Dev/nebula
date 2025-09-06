@@ -21,6 +21,7 @@ public class ConfigManager {
     private static ConfigurationNode config;
     private static ConfigurationNode messages;
     private static ConfigurationNode announcements;
+    private static ConfigurationNode friends;
     private static VelocityPlugin plugin;
     private static Path dataFolder;
     private static Logger logger;
@@ -36,6 +37,7 @@ public class ConfigManager {
             config = loadFile("config.yml");
             messages = loadFile("messages.yml");
             announcements = loadFile("announcements.yml");
+            friends = loadFile("friends.yml");
         } catch (IOException e) {
             logger.error("Failed to load configuration files: {}", e.getMessage(), e);
         }
@@ -74,6 +76,10 @@ public class ConfigManager {
         saveFile(announcements, "announcements.yml");
     }
 
+    public static void saveFriends() {
+        saveFile(friends, "friends.yml");
+    }
+
     private static void saveFile(ConfigurationNode node, String name) {
         if (node == null) {
             logger.warn("Cannot save {}: ConfigurationNode is null", name);
@@ -99,5 +105,9 @@ public class ConfigManager {
 
     public static ConfigurationNode getAnnouncements() {
         return announcements;
+    }
+
+    public static ConfigurationNode getFriends() {
+        return friends;
     }
 }
