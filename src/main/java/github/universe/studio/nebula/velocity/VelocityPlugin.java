@@ -25,6 +25,8 @@ import github.universe.studio.nebula.velocity.listeners.FriendListener;
 import github.universe.studio.nebula.velocity.listeners.GeneralListeners;
 import github.universe.studio.nebula.velocity.listeners.MotdListener;
 import github.universe.studio.nebula.velocity.listeners.StaffChatListener;
+import github.universe.studio.nebula.velocity.listeners.ChatCaptchaListener;
+import github.universe.studio.nebula.velocity.others.CaptchaManager;
 import github.universe.studio.nebula.velocity.others.FriendManager;
 import github.universe.studio.nebula.velocity.utils.CC;
 import github.universe.studio.nebula.velocity.utils.ConfigManager;
@@ -48,6 +50,7 @@ public class VelocityPlugin {
     private Announcer announcer;
     private StaffChatListener staffChatListener;
     private FriendManager friendManager;
+    private CaptchaManager captchaManager;
     private ConfigManager configManager;
 
     @Inject
@@ -74,27 +77,30 @@ public class VelocityPlugin {
         ConfigManager.init(this);
         ConfigManager.load();
 
-        logger.info(CC.translate("&b&lNEBULA &7⇨ &fProxyCore"));
-        logger.info(CC.translate("        &a&lENABLED"));
-        logger.info(CC.translate(" &7⇨ &fVersion: &b1.4"));
-        logger.info(CC.translate(" &7⇨ &fAuthor: &bUniverse Studio"));
-        logger.info(CC.translate(" &7⇨ &fDiscord: &bhttps://discord.gg/jGKm94fMAk"));
+        logger.info(CC.translate("<gradient:blue:aqua>NEBULA</gradient> ⇨ <white>ProxyCore"));
+        logger.info(CC.translate("<green><bold>ENABLED"));
+        logger.info(CC.translate(" ⇨ <white>Version: <aqua>1.4"));
+        logger.info(CC.translate(" ⇨ <white>Author: <aqua>Universe Studio"));
+        logger.info(CC.translate(" ⇨ <white>Discord: <aqua>https://discord.gg/jGKm94fMAk"));
         logger.info(CC.translate(""));
-        logger.info(CC.translate(" &bThis plugin will be free until a limited version,"));
-        logger.info(CC.translate(" &bso take advantage."));
+        logger.info(CC.translate(" <aqua>This plugin will be free until a limited version,"));
+        logger.info(CC.translate(" <aqua>so take advantage."));
         logger.info(CC.translate(""));
 
         announcer = new Announcer(this, server, cc);
         staffChatListener = new StaffChatListener(this, server, cc);
         friendManager = new FriendManager(configManager, server);
+        captchaManager = new CaptchaManager(true, "captcha", "lobby", server);
         GeneralListeners generalListeners = new GeneralListeners(this, server, cc, pluginContainer);
         MotdListener motdListener = new MotdListener(this, server, cc);
         FriendListener friendListener = new FriendListener(friendManager);
+        ChatCaptchaListener captchaListener = new ChatCaptchaListener(captchaManager, server);
 
         server.getEventManager().register(this, generalListeners);
         server.getEventManager().register(this, motdListener);
         server.getEventManager().register(this, staffChatListener);
         server.getEventManager().register(this, friendListener);
+        server.getEventManager().register(this, captchaListener);
 
         friendManager.loadFriends();
         announcer.start();
