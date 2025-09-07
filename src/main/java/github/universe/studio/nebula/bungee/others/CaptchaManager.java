@@ -2,6 +2,7 @@ package github.universe.studio.nebula.bungee.others;
 
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
+import github.universe.studio.nebula.bungee.BungeePlugin;
 import github.universe.studio.nebula.bungee.utils.CC;
 import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import net.md_5.bungee.api.ProxyServer;
@@ -12,6 +13,7 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author DanielH131COL
@@ -25,12 +27,16 @@ public class CaptchaManager {
     private final String lobbyServer;
     private final Map<ProxiedPlayer, String> pending = new HashMap<>();
     private final Map<ProxiedPlayer, Integer> attempts = new HashMap<>();
+    private final Map<ProxiedPlayer, Integer> timeouts = new HashMap<>();
     private final Random random = new Random();
     private final int maxAttempts = 3;
+    private final BungeePlugin plugin;
+    private static final long TIMEOUT_SECONDS = 30;
 
-    public CaptchaManager(boolean enabled, String captchaServer, String lobbyServer) {
+    public CaptchaManager(boolean enabled, String captchaServer, String lobbyServer, BungeePlugin plugin) {
         this.captchaServer = captchaServer;
         this.lobbyServer = lobbyServer;
+        this.plugin = plugin;
     }
 
     public boolean isEnabled() {
@@ -63,6 +69,7 @@ public class CaptchaManager {
         if (currentAttempts >= maxAttempts) {
             pending.remove(p);
             attempts.remove(p);
+            cancelTimeout(p);
             p.disconnect(new TextComponent(CC.translate("&cYou have exceeded the maximum number of attempts.")));
         }
         return false;
@@ -72,7 +79,8 @@ public class CaptchaManager {
         ServerInfo captcha = ProxyServer.getInstance().getServerInfo(captchaServer);
         if (captcha != null) {
             p.connect(captcha);
-            sendRestrictionMessage(p);
+            ProxyServer.getInstance().getScheduler()
+                    .schedule(plugin, () -> sendRestrictionMessage(p), 500, TimeUnit.MILLISECONDS);
         }
     }
 
@@ -84,15 +92,37 @@ public class CaptchaManager {
         }
     }
 
+    public void scheduleTimeout(ProxiedPlayer p) {
+        int taskId = ProxyServer.getInstance().getScheduler()
+                .schedule(plugin, () -> {
+                    if (pending.containsKey(p)) {
+                        pending.remove(p);
+                        attempts.remove(p);
+                        p.disconnect(new TextComponent(CC.translate("&cYou took too long to complete the CAPTCHA.")));
+                    }
+                }, TIMEOUT_SECONDS, TimeUnit.SECONDS)
+                .getId();
+        timeouts.put(p, taskId);
+    }
+
+    public void cancelTimeout(ProxiedPlayer p) {
+        Integer taskId = timeouts.remove(p);
+        if (taskId != null) {
+            ProxyServer.getInstance().getScheduler().cancel(taskId);
+        }
+    }
+
     public void clearPlayer(ProxiedPlayer p) {
         pending.remove(p);
         attempts.remove(p);
+        cancelTimeout(p);
     }
 
     private void sendRestrictionMessage(ProxiedPlayer p) {
         ByteArrayDataOutput out = ByteStreams.newDataOutput();
         out.writeUTF("RestrictMovement");
         out.writeUTF(p.getName());
+        out.writeUTF("true");
         p.getServer().sendData("BungeeCord", out.toByteArray());
     }
 

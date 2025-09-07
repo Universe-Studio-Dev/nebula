@@ -78,20 +78,20 @@ public class VelocityPlugin {
         ConfigManager.init(this);
         ConfigManager.load();
 
-        logger.info(CC.translate("<gradient:blue:aqua>NEBULA</gradient> ⇨ <white>ProxyCore"));
-        logger.info(CC.translate("<green><bold>ENABLED"));
-        logger.info(CC.translate(" ⇨ <white>Version: <aqua>1.5"));
-        logger.info(CC.translate(" ⇨ <white>Author: <aqua>Universe Studio"));
-        logger.info(CC.translate(" ⇨ <white>Discord: <aqua>https://discord.gg/jGKm94fMAk"));
-        logger.info(CC.translate(""));
-        logger.info(CC.translate(" <aqua>This plugin will be free until a limited version,"));
-        logger.info(CC.translate(" <aqua>so take advantage."));
-        logger.info(CC.translate(""));
+        cc.console("&b&lNEBULA &7⇨ &fProxyCore");
+        cc.console("       &a&lENABLED");
+        cc.console(" &7⇨ &fVersion: &b1.5");
+        cc.console(" &7⇨ &fAuthor: &bUniverse Studio");
+        cc.console(" &7⇨ &fDiscord: &bhttps://discord.gg/jGKm94fMAk");
+        cc.console("");
+        cc.console(" &bThis plugin will be free until a limited version,");
+        cc.console(" &bso take advantage.");
+        cc.console("");
 
         announcer = new Announcer(this, server, cc);
         staffChatListener = new StaffChatListener(this, server, cc);
         friendManager = new FriendManager(configManager, server);
-        captchaManager = new CaptchaManager(true, "captcha", "lobby", server);
+        captchaManager = new CaptchaManager(true, "captcha", "lobby", server, this);
         GeneralListeners generalListeners = new GeneralListeners(this, server, cc, pluginContainer);
         MotdListener motdListener = new MotdListener(this, server, cc);
         FriendListener friendListener = new FriendListener(friendManager);

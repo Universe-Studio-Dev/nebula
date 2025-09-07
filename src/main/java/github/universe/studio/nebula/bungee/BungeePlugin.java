@@ -65,13 +65,14 @@ public class BungeePlugin extends Plugin {
         captchaManager = new CaptchaManager(
                 configManager.getConfig().getBoolean("captcha.enabled", true),
                 configManager.getConfig().getString("captcha.server", "captcha"),
-                configManager.getConfig().getString("captcha.lobby", "lobby")
+                configManager.getConfig().getString("captcha.lobby", "lobby"),
+                this
         );
         friendManager = new FriendManager(configManager);
         friendManager.loadFriends();
 
         getProxy().getPluginManager().registerListener(this, new ConnectionListener(this, connectionLimiter, floodDetector, blacklistManager, nameValidator));
-        getProxy().getPluginManager().registerListener(this, new ChatCaptchaListener(captchaManager));
+        getProxy().getPluginManager().registerListener(this, new ChatCaptchaListener(captchaManager, this));
         getProxy().getPluginManager().registerListener(this, staffChatListener = new StaffChatListener(this));
         getProxy().getPluginManager().registerListener(this, new GeneralListeners(this));
         getProxy().getPluginManager().registerListener(this, new MotdListener(this));

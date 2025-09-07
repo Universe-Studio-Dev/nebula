@@ -40,6 +40,7 @@ public class ChatCaptchaListener {
 
         String code = captchaManager.generateCaptcha(player);
         captchaManager.sendToCaptchaServer(player);
+        captchaManager.scheduleTimeout(player);
 
         String titleText = "&c&l⚠ AntiBot Activated";
         String subtitleText = "&fPlease enter this code: &e" + code;
@@ -70,6 +71,7 @@ public class ChatCaptchaListener {
             Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(5000), Duration.ofMillis(1000));
             Title titleObject = Title.title(title, subtitle, times);
             player.showTitle(titleObject);
+            captchaManager.cancelTimeout(player);
             captchaManager.sendToLobby(player);
         } else {
             String titleText = "&c&l❌ Incorrect Code";
