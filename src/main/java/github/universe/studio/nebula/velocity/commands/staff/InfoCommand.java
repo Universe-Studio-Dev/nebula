@@ -7,9 +7,9 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import github.universe.studio.nebula.velocity.utils.CC;
 import github.universe.studio.nebula.velocity.utils.ConfigManager;
 import github.universe.studio.nebula.velocity.utils.ConnectionTracker;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.spongepowered.configurate.ConfigurationNode;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
@@ -17,9 +17,9 @@ import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
+import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 /**
@@ -106,7 +106,7 @@ public class InfoCommand implements SimpleCommand {
                 country = obj.get("country").toString();
             } catch (Exception ignored) { }
 
-            List<String> lines = null;
+            List<String> lines;
             try {
                 lines = ConfigManager.getMessages().node("info", "format").getList(String.class, List.of());
             } catch (SerializationException e) {
@@ -125,6 +125,26 @@ public class InfoCommand implements SimpleCommand {
                 player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(CC.translate(replaced)));
             }
         });
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
+        if (!sender.hasPermission("nebula.info")) {
+            return List.of();
+        }
+
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            return server.getAllPlayers().stream()
+                    .map(Player::getUsername)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
     }
 
     private String formatearTiempo(long ms) {

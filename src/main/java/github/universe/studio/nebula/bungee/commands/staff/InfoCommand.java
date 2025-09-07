@@ -8,6 +8,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
@@ -17,8 +18,15 @@ import java.net.URL;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
-public class InfoCommand extends Command {
+/**
+ * @author DanielH131COL
+ * @created 16/08/2025
+ * @project nebula
+ * @file InfoCommand
+ */
+public class InfoCommand extends Command implements TabExecutor {
 
     public InfoCommand() {
         super("info", "nebula.info", "whois");
@@ -32,8 +40,7 @@ public class InfoCommand extends Command {
         }
 
         if (!sender.hasPermission("nebula.info")) {
-            sender.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.no-permission")
-            ));
+            sender.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.no-permission")));
             return;
         }
 
@@ -98,6 +105,23 @@ public class InfoCommand extends Command {
                 player.sendMessage(CC.translate(IridiumColorAPI.process(replaced)));
             }
         });
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("nebula.info")) {
+            return List.of();
+        }
+
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            return ProxyServer.getInstance().getPlayers().stream()
+                    .map(ProxiedPlayer::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
     }
 
     private String formatearTiempo(long ms) {
