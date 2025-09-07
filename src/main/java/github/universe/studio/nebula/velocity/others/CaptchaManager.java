@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.ProxyServer;
 import com.velocitypowered.api.proxy.ServerConnection;
 import com.velocitypowered.api.proxy.server.RegisteredServer;
 import github.universe.studio.nebula.velocity.utils.CC;
+import github.universe.studio.nebula.velocity.utils.ConfigManager;
 import net.kyori.adventure.text.Component;
 
 import java.util.HashMap;
@@ -20,7 +21,6 @@ import java.util.Random;
  */
 public class CaptchaManager {
 
-    private final boolean enabled;
     private final String captchaServer;
     private final String lobbyServer;
     private final Map<Player, String> pending = new HashMap<>();
@@ -30,14 +30,13 @@ public class CaptchaManager {
     private final ProxyServer server;
 
     public CaptchaManager(boolean enabled, String captchaServer, String lobbyServer, ProxyServer server) {
-        this.enabled = enabled;
         this.captchaServer = captchaServer;
         this.lobbyServer = lobbyServer;
         this.server = server;
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return ConfigManager.getConfig().node("captcha", "enabled").getBoolean(true);
     }
 
     public boolean needsCaptcha(Player player) {

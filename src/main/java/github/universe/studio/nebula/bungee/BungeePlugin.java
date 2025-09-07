@@ -129,4 +129,8 @@ public class BungeePlugin extends Plugin {
     public FriendManager getFriendManager() {
         return friendManager;
     }
+
+    public CaptchaManager getCaptchaManager() {
+        return captchaManager;
+    }
 }

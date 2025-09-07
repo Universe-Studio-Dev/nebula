@@ -7,6 +7,7 @@ import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.config.Configuration;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -104,14 +105,19 @@ public class NebulaCommand extends Command implements TabExecutor {
                 boolean currentCaptchaState = config.getBoolean("captcha.enabled", true);
                 config.set("captcha.enabled", !currentCaptchaState);
                 BungeePlugin.getConfigManager().saveConfig();
-                BungeePlugin.getConfigManager().load();
+
+                if (!currentCaptchaState == false) {
+                    for (ProxiedPlayer player : BungeePlugin.getInstance().getProxy().getPlayers()) {
+                        BungeePlugin.getInstance().getCaptchaManager().clearPlayer(player);
+                        BungeePlugin.getInstance().getCaptchaManager().sendToLobby(player);
+                    }
+                }
                 sender.sendMessage(CC.translate("&aCaptcha has been " + (!currentCaptchaState ? "enabled" : "disabled") + "."));
                 break;
             default:
                 sendHelp(sender);
         }
     }
-
 
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(CC.translate("&b&lNEBULA &fCommands:"));

@@ -120,4 +120,8 @@ public class VelocityPlugin {
         commandManager.register(commandManager.metaBuilder("stream").build(), new StreamCommand(this, server));
         commandManager.register(commandManager.metaBuilder("friend").aliases("friends", "amigos", "amigo", "frd").build(), new FriendCommand(friendManager, server));
     }
+
+    public CaptchaManager getCaptchaManager() {
+        return captchaManager;
+    }
 }

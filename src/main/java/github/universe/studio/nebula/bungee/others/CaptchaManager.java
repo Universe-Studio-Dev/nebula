@@ -3,6 +3,7 @@ package github.universe.studio.nebula.bungee.others;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import github.universe.studio.nebula.bungee.utils.CC;
+import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -20,7 +21,6 @@ import java.util.Random;
  */
 public class CaptchaManager {
 
-    private final boolean enabled;
     private final String captchaServer;
     private final String lobbyServer;
     private final Map<ProxiedPlayer, String> pending = new HashMap<>();
@@ -29,13 +29,12 @@ public class CaptchaManager {
     private final int maxAttempts = 3;
 
     public CaptchaManager(boolean enabled, String captchaServer, String lobbyServer) {
-        this.enabled = enabled;
         this.captchaServer = captchaServer;
         this.lobbyServer = lobbyServer;
     }
 
     public boolean isEnabled() {
-        return enabled;
+        return ConfigManager.getConfig().getBoolean("captcha.enabled", true);
     }
 
     public boolean needsCaptcha(ProxiedPlayer p) {
