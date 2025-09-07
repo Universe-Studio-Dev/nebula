@@ -8,8 +8,19 @@ import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
-public class BlacklistCommand extends Command {
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+/**
+ * @author DanielH131COL
+ * @created 16/08/2025
+ * @project nebula
+ * @file BlacklistCommand
+ */
+public class BlacklistCommand extends Command implements TabExecutor {
 
     public BlacklistCommand() {
         super("blacklist", "nebula.blacklist");
@@ -77,5 +88,27 @@ public class BlacklistCommand extends Command {
             sender.sendMessage(TextComponent.fromLegacyText(CC.translate(
                     "&cInvalid action. Use add/remove.")));
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (!sender.hasPermission("nebula.blacklist")) {
+            return List.of();
+        }
+
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            return Arrays.asList("add", "remove").stream()
+                    .filter(action -> action.startsWith(partial))
+                    .collect(Collectors.toList());
+        } else if (args.length == 2) {
+            String partial = args[1].toLowerCase();
+            return ProxyServer.getInstance().getPlayers().stream()
+                    .map(ProxiedPlayer::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
     }
 }

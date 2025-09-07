@@ -6,9 +6,12 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import github.universe.studio.nebula.velocity.utils.CC;
 import github.universe.studio.nebula.velocity.utils.ConfigManager;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.spongepowered.configurate.ConfigurationNode;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author DanielH131COL
@@ -112,5 +115,30 @@ public class BlacklistCommand implements SimpleCommand {
                     CC.translate("&cInvalid action. Use add/remove.")
             ));
         }
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
+        if (!sender.hasPermission("nebula.blacklist")) {
+            return List.of();
+        }
+
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            return Arrays.asList("add", "remove").stream()
+                    .filter(action -> action.startsWith(partial))
+                    .collect(Collectors.toList());
+        } else if (args.length == 2) {
+            String partial = args[1].toLowerCase();
+            return server.getAllPlayers().stream()
+                    .map(Player::getUsername)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
     }
 }
