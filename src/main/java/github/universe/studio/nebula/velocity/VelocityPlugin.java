@@ -95,7 +95,7 @@ public class VelocityPlugin {
         GeneralListeners generalListeners = new GeneralListeners(this, server, cc, pluginContainer);
         MotdListener motdListener = new MotdListener(this, server, cc);
         FriendListener friendListener = new FriendListener(friendManager);
-        ChatCaptchaListener captchaListener = new ChatCaptchaListener(captchaManager, server);
+        ChatCaptchaListener captchaListener = new ChatCaptchaListener(captchaManager, server, this);
 
         server.getEventManager().register(this, generalListeners);
         server.getEventManager().register(this, motdListener);
@@ -107,7 +107,7 @@ public class VelocityPlugin {
         announcer.start();
 
         CommandManager commandManager = server.getCommandManager();
-        commandManager.register(commandManager.metaBuilder("msg").aliases("ignore", "ignorar").build(), new IgnoreCommand(server));
+        commandManager.register(commandManager.metaBuilder("ignore").aliases("ignorar").build(), new IgnoreCommand(server));
         commandManager.register(commandManager.metaBuilder("msg").aliases("tell", "w", "mensaje").build(), new MsgCommand(server));
         commandManager.register(commandManager.metaBuilder("reply").aliases("r", "responder").build(), new ReplyCommand(server));
         commandManager.register(commandManager.metaBuilder("helpop").aliases("ayuda").build(), new HelpopCommand(this, server));

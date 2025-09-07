@@ -6,11 +6,13 @@ import com.velocitypowered.api.event.connection.PostLoginEvent;
 import com.velocitypowered.api.event.player.PlayerChatEvent;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
+import github.universe.studio.nebula.velocity.VelocityPlugin;
 import github.universe.studio.nebula.velocity.others.CaptchaManager;
-import github.universe.studio.nebula.velocity.utils.CC;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.title.Title;
 import java.time.Duration;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author DanielH131COL
@@ -22,10 +24,12 @@ public class ChatCaptchaListener {
 
     private final CaptchaManager captchaManager;
     private final ProxyServer server;
+    private final VelocityPlugin plugin;
 
-    public ChatCaptchaListener(CaptchaManager captchaManager, ProxyServer server) {
+    public ChatCaptchaListener(CaptchaManager captchaManager, ProxyServer server, VelocityPlugin plugin) {
         this.captchaManager = captchaManager;
         this.server = server;
+        this.plugin = plugin;
     }
 
     @Subscribe
@@ -37,14 +41,17 @@ public class ChatCaptchaListener {
         String code = captchaManager.generateCaptcha(player);
         captchaManager.sendToCaptchaServer(player);
 
-        player.sendMessage(CC.translateToComponent("<red><bold>⚠ AntiBot Activated</bold>"));
-        player.sendMessage(CC.translateToComponent("<white>Please enter this code in the chat: <yellow>" + code));
-
-        Component title = CC.translateToComponent("<red><bold>⚠ AntiBot Activated</bold>");
-        Component subtitle = CC.translateToComponent("<white>Enter this code: <yellow>" + code);
-        Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(5000), Duration.ofMillis(1000));
+        String titleText = "&c&l⚠ AntiBot Activated";
+        String subtitleText = "&fPlease enter this code: &e" + code;
+        Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(titleText);
+        Component subtitle = LegacyComponentSerializer.legacyAmpersand().deserialize(subtitleText);
+        Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(15000), Duration.ofMillis(1000));
         Title titleObject = Title.title(title, subtitle, times);
-        player.showTitle(titleObject);
+
+        server.getScheduler()
+                .buildTask(plugin, () -> player.showTitle(titleObject))
+                .delay(500, TimeUnit.MILLISECONDS)
+                .schedule();
     }
 
     @Subscribe
@@ -56,22 +63,22 @@ public class ChatCaptchaListener {
 
         String message = event.getMessage();
         if (captchaManager.verify(player, message)) {
-            Component title = CC.translateToComponent("<green><bold>✅ Verification Completed!</bold>");
-            Component subtitle = CC.translateToComponent("<white>Welcome to the server");
-            Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(3000), Duration.ofMillis(1000));
+            String titleText = "&a&l✅ Verification Completed!";
+            String subtitleText = "&fWelcome to the server";
+            Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(titleText);
+            Component subtitle = LegacyComponentSerializer.legacyAmpersand().deserialize(subtitleText);
+            Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(5000), Duration.ofMillis(1000));
             Title titleObject = Title.title(title, subtitle, times);
             player.showTitle(titleObject);
-            player.sendMessage(CC.translateToComponent("<green><bold>✅ Verification Completed!</bold>"));
-            player.sendMessage(CC.translateToComponent("<white>Welcome to the server"));
             captchaManager.sendToLobby(player);
         } else {
-            Component title = CC.translateToComponent("<red><bold>❌ Incorrect Code</bold>");
-            Component subtitle = CC.translateToComponent("<white>Please try again");
-            Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(3000), Duration.ofMillis(1000));
+            String titleText = "&c&l❌ Incorrect Code";
+            String subtitleText = "&fPlease try again";
+            Component title = LegacyComponentSerializer.legacyAmpersand().deserialize(titleText);
+            Component subtitle = LegacyComponentSerializer.legacyAmpersand().deserialize(subtitleText);
+            Title.Times times = Title.Times.times(Duration.ofMillis(1000), Duration.ofMillis(5000), Duration.ofMillis(1000));
             Title titleObject = Title.title(title, subtitle, times);
             player.showTitle(titleObject);
-            player.sendMessage(CC.translateToComponent("<red><bold>❌ Incorrect Code</bold>"));
-            player.sendMessage(CC.translateToComponent("<white>Please try again"));
         }
     }
 
