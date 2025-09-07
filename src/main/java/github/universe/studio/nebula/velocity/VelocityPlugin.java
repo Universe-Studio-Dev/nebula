@@ -10,6 +10,7 @@ import com.velocitypowered.api.plugin.annotation.DataDirectory;
 import com.velocitypowered.api.proxy.ProxyServer;
 import github.universe.studio.nebula.Nebula;
 import github.universe.studio.nebula.velocity.commands.*;
+import github.universe.studio.nebula.velocity.commands.message.IgnoreCommand;
 import github.universe.studio.nebula.velocity.commands.message.MsgCommand;
 import github.universe.studio.nebula.velocity.commands.message.ReplyCommand;
 import github.universe.studio.nebula.velocity.commands.player.HelpopCommand;
@@ -106,6 +107,7 @@ public class VelocityPlugin {
         announcer.start();
 
         CommandManager commandManager = server.getCommandManager();
+        commandManager.register(commandManager.metaBuilder("msg").aliases("ignore", "ignorar").build(), new IgnoreCommand(server));
         commandManager.register(commandManager.metaBuilder("msg").aliases("tell", "w", "mensaje").build(), new MsgCommand(server));
         commandManager.register(commandManager.metaBuilder("reply").aliases("r", "responder").build(), new ReplyCommand(server));
         commandManager.register(commandManager.metaBuilder("helpop").aliases("ayuda").build(), new HelpopCommand(this, server));

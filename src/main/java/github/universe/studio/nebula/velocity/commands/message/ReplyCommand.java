@@ -6,9 +6,11 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import github.universe.studio.nebula.velocity.utils.CC;
 import github.universe.studio.nebula.velocity.utils.ConfigManager;
-import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.spongepowered.configurate.ConfigurationNode;
+import org.spongepowered.configurate.serialize.SerializationException;
+
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author DanielH131COL
@@ -29,13 +31,16 @@ public class ReplyCommand implements SimpleCommand {
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
-        if (!(sender instanceof Player)) return;
+        if (!(sender instanceof Player)) {
+            sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
+                    CC.translate(ConfigManager.getMessages().node("messages", "no-console").getString("&cThis command is for players only"))));
+            return;
+        }
         Player player = (Player) sender;
 
         if (args.length < 1) {
             player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    CC.translate(ConfigManager.getMessages().node("reply", "usage").getString("&cUsage: /reply <message>"))
-            ));
+                    CC.translate(ConfigManager.getMessages().node("reply", "usage").getString("&cUsage: /reply <message>"))));
             return;
         }
 
@@ -43,8 +48,15 @@ public class ReplyCommand implements SimpleCommand {
 
         if (target == null || !server.getPlayer(target.getUniqueId()).isPresent()) {
             player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    CC.translate(ConfigManager.getMessages().node("reply", "no-reply").getString("&cNo one to reply to"))
-            ));
+                    CC.translate(ConfigManager.getMessages().node("reply", "no-reply").getString("&cNo one to reply to"))));
+            return;
+        }
+
+        List<String> targetIgnoreList = getIgnoreList(target);
+        if (targetIgnoreList.contains(player.getUniqueId().toString())) {
+            player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(CC.translate(
+                    ConfigManager.getMessages().node("message", "ignored").getString("&c%player% is ignoring you")
+                            .replace("%player%", target.getUsername()))));
             return;
         }
 
@@ -55,12 +67,12 @@ public class ReplyCommand implements SimpleCommand {
 
         String msg = message.toString().trim();
 
-        String toSender = ConfigManager.getMessages().node("reply", "to-sender").getString("&7To %target%: &f%message%")
+        String toSender = ConfigManager.getMessages().node("reply", "to-sender").getString("&7[&bYou &7-> &b%target%&7] &f%message%")
                 .replace("%sender%", player.getUsername())
                 .replace("%target%", target.getUsername())
                 .replace("%message%", msg);
 
-        String toTarget = ConfigManager.getMessages().node("reply", "to-target").getString("&7From %sender%: &f%message%")
+        String toTarget = ConfigManager.getMessages().node("reply", "to-target").getString("&7[&b%sender% &7-> &bYou&7] &f%message%")
                 .replace("%sender%", player.getUsername())
                 .replace("%target%", target.getUsername())
                 .replace("%message%", msg);
@@ -70,5 +82,25 @@ public class ReplyCommand implements SimpleCommand {
 
         MsgCommand.lastMessaged.put(player, target);
         MsgCommand.lastMessaged.put(target, player);
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
+        if (!(sender instanceof Player)) {
+            return Collections.emptyList();
+        }
+
+        return Collections.emptyList();
+    }
+
+    private List<String> getIgnoreList(Player player) {
+        try {
+            return ConfigManager.getConfig().node("ignore", player.getUniqueId().toString()).getList(String.class, Collections.emptyList());
+        } catch (SerializationException e) {
+            return Collections.emptyList();
+        }
     }
 }

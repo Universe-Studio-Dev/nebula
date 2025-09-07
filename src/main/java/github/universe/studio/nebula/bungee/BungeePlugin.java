@@ -2,6 +2,7 @@ package github.universe.studio.nebula.bungee;
 
 import github.universe.studio.nebula.Nebula;
 import github.universe.studio.nebula.bungee.commands.*;
+import github.universe.studio.nebula.bungee.commands.message.IgnoreCommand;
 import github.universe.studio.nebula.bungee.commands.message.MsgCommand;
 import github.universe.studio.nebula.bungee.commands.message.ReplyCommand;
 import github.universe.studio.nebula.bungee.commands.player.HelpopCommand;
@@ -78,6 +79,7 @@ public class BungeePlugin extends Plugin {
 
         getProxy().getPluginManager().registerCommand(this, new MsgCommand());
         getProxy().getPluginManager().registerCommand(this, new ReplyCommand());
+        getProxy().getPluginManager().registerCommand(this, new IgnoreCommand());
         getProxy().getPluginManager().registerCommand(this, new BlacklistCommand());
         getProxy().getPluginManager().registerCommand(this, new NebulaCommand());
         getProxy().getPluginManager().registerCommand(this, new PingCommand());
