@@ -5,9 +5,11 @@ import github.universe.studio.nebula.bungee.utils.CC;
 import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 import net.md_5.bungee.config.Configuration;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -16,7 +18,7 @@ import java.util.List;
  * @project nebula
  * @file NebulaCommand
  */
-public class NebulaCommand extends Command {
+public class NebulaCommand extends Command implements TabExecutor {
 
     public NebulaCommand() {
         super("nebula", "nebula.admin", "n");
@@ -110,6 +112,7 @@ public class NebulaCommand extends Command {
         }
     }
 
+
     private void sendHelp(CommandSender sender) {
         sender.sendMessage(CC.translate("&b&lNEBULA &fCommands:"));
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula reload &7- Reload all configuration files."));
@@ -117,5 +120,24 @@ public class NebulaCommand extends Command {
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula addannouncement <name> <interval> <message> | <message> &7- Add a new announcement"));
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula removeannouncement <name> &7- Remove an announcement"));
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula captcha &7- Toggle captcha system on/off"));
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        List<String> completions = new ArrayList<>();
+        if (!sender.hasPermission("nebula.admin")) {
+            return completions;
+        }
+
+        if (args.length == 1) {
+            completions.addAll(Arrays.asList("reload", "info", "addannouncement", "removeannouncement", "captcha"));
+        } else if (args.length == 2 && args[0].equalsIgnoreCase("removeannouncement")) {
+            Configuration announcements = ConfigManager.getAnnouncements();
+            if (announcements.contains("announcements")) {
+                completions.addAll(announcements.getSection("announcements").getKeys());
+            }
+        }
+
+        return completions;
     }
 }
