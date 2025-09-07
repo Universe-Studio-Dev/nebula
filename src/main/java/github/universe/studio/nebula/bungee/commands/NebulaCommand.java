@@ -97,6 +97,14 @@ public class NebulaCommand extends Command {
                 BungeePlugin.getInstance().getAnnouncer().start();
                 sender.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.announcement-removed").replace("%name%", removeName)));
                 break;
+            case "captcha":
+                Configuration config = ConfigManager.getConfig();
+                boolean currentCaptchaState = config.getBoolean("captcha.enabled", true);
+                config.set("captcha.enabled", !currentCaptchaState);
+                BungeePlugin.getConfigManager().saveConfig();
+                BungeePlugin.getConfigManager().load();
+                sender.sendMessage(CC.translate("&aCaptcha has been " + (!currentCaptchaState ? "enabled" : "disabled") + "."));
+                break;
             default:
                 sendHelp(sender);
         }
@@ -108,5 +116,6 @@ public class NebulaCommand extends Command {
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula info &7- Display plugin information."));
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula addannouncement <name> <interval> <message> | <message> &7- Add a new announcement"));
         sender.sendMessage(CC.translate(" &7⇨ &a/nebula removeannouncement <name> &7- Remove an announcement"));
+        sender.sendMessage(CC.translate(" &7⇨ &a/nebula captcha &7- Toggle captcha system on/off"));
     }
 }
