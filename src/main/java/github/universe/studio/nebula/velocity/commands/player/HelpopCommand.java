@@ -79,7 +79,7 @@ public class HelpopCommand implements SimpleCommand {
         }
 
         for (Player onlinePlayer : server.getAllPlayers()) {
-            if (onlinePlayer.hasPermission("nubula.staff")) {
+            if (onlinePlayer.hasPermission("nebula.staff")) {
                 onlinePlayer.sendMessage(staffText);
             }
         }

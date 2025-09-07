@@ -23,7 +23,7 @@ public class StaffChatCommand extends Command {
     private final StaffChatListener listener;
 
     public StaffChatCommand(BungeePlugin plugin, StaffChatListener listener) {
-        super("sc", "nubula.staff", "staffchat");
+        super("sc", "nebula.staff", "staffchat");
         this.plugin = plugin;
         this.listener = listener;
     }
@@ -37,7 +37,7 @@ public class StaffChatCommand extends Command {
 
         ProxiedPlayer player = (ProxiedPlayer) sender;
 
-        if (!player.hasPermission("nubula.staff")) {
+        if (!player.hasPermission("nebula.staff")) {
             player.sendMessage(new TextComponent(CC.translate(ConfigManager.getMessages().getString("messages.no-permission"))));
             return;
         }

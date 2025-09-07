@@ -41,7 +41,7 @@ public class StaffChatCommand implements SimpleCommand {
 
         Player player = (Player) sender;
 
-        if (!player.hasPermission("nubula.staff")) {
+        if (!player.hasPermission("nebula.staff")) {
             player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
                     CC.translate(ConfigManager.getMessages().node("messages", "no-permission").getString("&cYou do not have permission"))
             ));

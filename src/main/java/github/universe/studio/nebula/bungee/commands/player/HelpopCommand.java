@@ -62,7 +62,7 @@ public class HelpopCommand extends Command {
         }
 
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
-            if (onlinePlayer.hasPermission("nubula.staff")) {
+            if (onlinePlayer.hasPermission("nebula.staff")) {
                 onlinePlayer.sendMessage(staffText);
             }
         }

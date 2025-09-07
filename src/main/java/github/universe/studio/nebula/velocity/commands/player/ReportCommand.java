@@ -15,6 +15,7 @@ import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author DanielH131COL
@@ -62,7 +63,7 @@ public class ReportCommand implements SimpleCommand {
                 .replace("%message%", message));
         player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(playerMessage));
 
-        List<String> staffMessages = null;
+        List<String> staffMessages;
         try {
             staffMessages = ConfigManager.getMessages().node("messages", "report-received").getList(String.class, new ArrayList<>());
         } catch (SerializationException e) {
@@ -82,9 +83,29 @@ public class ReportCommand implements SimpleCommand {
         }
 
         for (Player onlinePlayer : server.getAllPlayers()) {
-            if (onlinePlayer.hasPermission("nubula.staff")) {
+            if (onlinePlayer.hasPermission("nebula.staff")) {
                 onlinePlayer.sendMessage(staffText);
             }
         }
+    }
+
+    @Override
+    public List<String> suggest(Invocation invocation) {
+        CommandSource sender = invocation.source();
+        String[] args = invocation.arguments();
+
+        if (!(sender instanceof Player)) {
+            return List.of();
+        }
+
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            return server.getAllPlayers().stream()
+                    .map(Player::getUsername)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
     }
 }

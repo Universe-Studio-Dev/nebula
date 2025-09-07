@@ -45,7 +45,7 @@ public class StaffChatListener implements Listener {
 
         ProxiedPlayer player = (ProxiedPlayer) event.getSender();
 
-        if (!player.hasPermission("nubula.staff")) {
+        if (!player.hasPermission("nebula.staff")) {
             return;
         }
 
@@ -64,7 +64,7 @@ public class StaffChatListener implements Listener {
         TextComponent staffMessage = new TextComponent(staffMessageFormat);
 
         for (ProxiedPlayer onlinePlayer : ProxyServer.getInstance().getPlayers()) {
-            if (onlinePlayer.hasPermission("nubula.staff")) {
+            if (onlinePlayer.hasPermission("nebula.staff")) {
                 onlinePlayer.sendMessage(staffMessage);
             }
         }

@@ -59,13 +59,13 @@ public class GeneralListeners {
             }
         }
 
-        if (player.hasPermission("nubula.staff")) {
+        if (player.hasPermission("nebula.staff")) {
             String joinMessage = CC.translate(ConfigManager.getMessages().node("messages", "staff-join").getString("&e%player% &7se ha conectado al servidor &e%server%"))
                     .replace("%player%", player.getUsername())
                     .replace("%server%", player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("Desconocido"));
             Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(joinMessage);
             for (Player onlinePlayer : server.getAllPlayers()) {
-                if (onlinePlayer.hasPermission("nubula.staff")) {
+                if (onlinePlayer.hasPermission("nebula.staff")) {
                     onlinePlayer.sendMessage(message);
                 }
             }
@@ -81,12 +81,12 @@ public class GeneralListeners {
     public void onPlayerDisconnect(DisconnectEvent event) {
         Player player = event.getPlayer();
 
-        if (player.hasPermission("nubula.staff")) {
+        if (player.hasPermission("nebula.staff")) {
             String leaveMessage = CC.translate(ConfigManager.getMessages().node("messages", "staff-leave").getString("&e%player% &7se ha desconectado"))
                     .replace("%player%", player.getUsername());
             Component message = LegacyComponentSerializer.legacyAmpersand().deserialize(leaveMessage);
             for (Player onlinePlayer : server.getAllPlayers()) {
-                if (onlinePlayer.hasPermission("nubula.staff")) {
+                if (onlinePlayer.hasPermission("nebula.staff")) {
                     onlinePlayer.sendMessage(message);
                 }
             }

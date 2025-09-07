@@ -8,8 +8,10 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
+import net.md_5.bungee.api.plugin.TabExecutor;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * @author DanielH131COL
@@ -17,7 +19,7 @@ import java.util.List;
  * @project nebula
  * @file ReportCommand
  */
-public class ReportCommand extends Command {
+public class ReportCommand extends Command implements TabExecutor {
 
     private final BungeePlugin plugin;
 
@@ -64,9 +66,26 @@ public class ReportCommand extends Command {
         }
 
         for (ProxiedPlayer onlinePlayer : plugin.getProxy().getPlayers()) {
-            if (onlinePlayer.hasPermission("nubula.staff")) {
+            if (onlinePlayer.hasPermission("nebula.staff")) {
                 onlinePlayer.sendMessage(staffText);
             }
         }
+    }
+
+    @Override
+    public Iterable<String> onTabComplete(CommandSender sender, String[] args) {
+        if (!(sender instanceof ProxiedPlayer)) {
+            return List.of();
+        }
+
+        if (args.length == 1) {
+            String partial = args[0].toLowerCase();
+            return plugin.getProxy().getPlayers().stream()
+                    .map(ProxiedPlayer::getName)
+                    .filter(name -> name.toLowerCase().startsWith(partial))
+                    .collect(Collectors.toList());
+        }
+
+        return List.of();
     }
 }

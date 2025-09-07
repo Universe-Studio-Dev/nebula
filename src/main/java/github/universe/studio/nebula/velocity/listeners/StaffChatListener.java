@@ -45,7 +45,7 @@ public class StaffChatListener {
 
         Player player = event.getPlayer();
 
-        if (!player.hasPermission("nubula.staff")) {
+        if (!player.hasPermission("nebula.staff")) {
             return;
         }
 
@@ -64,7 +64,7 @@ public class StaffChatListener {
         Component staffMessage = LegacyComponentSerializer.legacyAmpersand().deserialize(staffMessageFormat);
 
         for (Player onlinePlayer : server.getAllPlayers()) {
-            if (onlinePlayer.hasPermission("nubula.staff")) {
+            if (onlinePlayer.hasPermission("nebula.staff")) {
                 onlinePlayer.sendMessage(staffMessage);
             }
         }

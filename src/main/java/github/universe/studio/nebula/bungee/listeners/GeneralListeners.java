@@ -52,11 +52,11 @@ public class GeneralListeners implements Listener {
             player.sendMessage(CC.translate(" &7⇨ &fDescription: &aProxyCore with announcer and stream system and more."));
         }
 
-        if (player.hasPermission("nubula.staff")) {
+        if (player.hasPermission("nebula.staff")) {
             String joinMessage = CC.translate(ConfigManager.getMessages().getString("messages.staff-join", "&e%player% &7se ha conectado al servidor &e%server%")).replace("%player%", player.getName()).replace("%server%", player.getServer() != null ? player.getServer().getInfo().getName() : "Desconocido");
             TextComponent message = new TextComponent(joinMessage);
             for (ProxiedPlayer onlinePlayer : ProxyServer.getInstance().getPlayers()) {
-                if (onlinePlayer.hasPermission("nubula.staff")) {
+                if (onlinePlayer.hasPermission("nebula.staff")) {
                     onlinePlayer.sendMessage(message);
                 }
             }
@@ -72,11 +72,11 @@ public class GeneralListeners implements Listener {
     public void onPlayerDisconnect(PlayerDisconnectEvent event) {
         ProxiedPlayer player = event.getPlayer();
 
-        if (player.hasPermission("nubula.staff")) {
+        if (player.hasPermission("nebula.staff")) {
             String leaveMessage = CC.translate(ConfigManager.getMessages().getString("messages.staff-leave", "&e%player% &7se ha desconectado")).replace("%player%", player.getName());
             TextComponent message = new TextComponent(leaveMessage);
             for (ProxiedPlayer onlinePlayer : ProxyServer.getInstance().getPlayers()) {
-                if (onlinePlayer.hasPermission("nubula.staff")) {
+                if (onlinePlayer.hasPermission("nebula.staff")) {
                     onlinePlayer.sendMessage(message);
                 }
             }
