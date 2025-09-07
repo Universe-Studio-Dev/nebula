@@ -40,7 +40,7 @@ import java.nio.file.Path;
  * @project nebula
  * @file VelocityPlugin
  */
-@Plugin(id = "nebula", name = "Nebula", version = "1.3", authors = {"Universe Studio"})
+@Plugin(id = "nebula", name = "Nebula", version = "1.5", authors = {"Universe Studio"})
 public class VelocityPlugin {
 
     private final ProxyServer server;
@@ -79,7 +79,7 @@ public class VelocityPlugin {
 
         logger.info(CC.translate("<gradient:blue:aqua>NEBULA</gradient> ⇨ <white>ProxyCore"));
         logger.info(CC.translate("<green><bold>ENABLED"));
-        logger.info(CC.translate(" ⇨ <white>Version: <aqua>1.4"));
+        logger.info(CC.translate(" ⇨ <white>Version: <aqua>1.5"));
         logger.info(CC.translate(" ⇨ <white>Author: <aqua>Universe Studio"));
         logger.info(CC.translate(" ⇨ <white>Discord: <aqua>https://discord.gg/jGKm94fMAk"));
         logger.info(CC.translate(""));

@@ -1,7 +1,7 @@
 {
   "id": "nebula",
   "name": "Nebula",
-  "version": "1.4",
+  "version": "1.5",
   "authors": ["Universe Studio"],
   "main": "github.universe.studio.nebula.velocity.VelocityPlugin"
 }
