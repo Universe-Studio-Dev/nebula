@@ -17,9 +17,19 @@
       <option name="url" value="https://nexus.iridiumdevelopment.net/repository/maven-releases/" />
     </remote-repository>
     <remote-repository>
+      <option name="id" value="bungeecord" />
+      <option name="name" value="bungeecord" />
+      <option name="url" value="https://oss.sonatype.org/content/repositories/snapshots" />
+    </remote-repository>
+    <remote-repository>
       <option name="id" value="papermc-repo" />
       <option name="name" value="papermc-repo" />
       <option name="url" value="https://repo.papermc.io/repository/maven-public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="kyori" />
+      <option name="name" value="kyori" />
+      <option name="url" value="https://repo.kyori.net/repository/public/" />
     </remote-repository>
     <remote-repository>
       <option name="id" value="yworks-releases" />
@@ -35,6 +45,11 @@
       <option name="id" value="jboss.community" />
       <option name="name" value="JBoss Community repository" />
       <option name="url" value="https://repository.jboss.org/nexus/content/repositories/public/" />
+    </remote-repository>
+    <remote-repository>
+      <option name="id" value="velocity" />
+      <option name="name" value="velocity" />
+      <option name="url" value="https://nexus.velocitypowered.com/repository/maven-public/" />
     </remote-repository>
   </component>
 </project>

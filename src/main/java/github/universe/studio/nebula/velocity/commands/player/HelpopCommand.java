@@ -13,8 +13,14 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author DanielH131COL
@@ -23,9 +29,10 @@ import java.util.List;
  * @file HelpopCommand
  */
 public class HelpopCommand implements SimpleCommand {
-
     private final VelocityPlugin plugin;
     private final ProxyServer server;
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public HelpopCommand(VelocityPlugin plugin, ProxyServer server) {
         this.plugin = plugin;
@@ -60,7 +67,7 @@ public class HelpopCommand implements SimpleCommand {
                 .replace("%message%", message));
         player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(playerMessage));
 
-        List<String> staffMessages = null;
+        List<String> staffMessages;
         try {
             staffMessages = ConfigManager.getMessages().node("messages", "helpop-received").getList(String.class, new ArrayList<>());
         } catch (SerializationException e) {
@@ -83,5 +90,29 @@ public class HelpopCommand implements SimpleCommand {
                 onlinePlayer.sendMessage(staffText);
             }
         }
+
+        String webhookUrl = ConfigManager.getConfig().node("webhooks", "helpop").getString("");
+        if (!webhookUrl.isEmpty() && !webhookUrl.contains("REPLACES")) {
+            String discordMessage = String.join("\n", staffMessages)
+                    .replace("%player%", player.getUsername())
+                    .replace("%server%", serverName)
+                    .replace("%message%", message);
+            sendWebhook(webhookUrl, discordMessage);
+        }
+    }
+
+    private void sendWebhook(String url, String content) {
+        executor.submit(() -> {
+            try {
+                String json = "{\"content\": \"" + content.replace("\"", "\\\"") + "\"}";
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (Exception ignored) {
+            }
+        });
     }
 }
