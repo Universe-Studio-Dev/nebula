@@ -1,7 +1,6 @@
 package github.universe.studio.nebula.bungee.commands.player;
 
 import github.universe.studio.nebula.bungee.BungeePlugin;
-import github.universe.studio.nebula.bungee.BungeePlugin;
 import github.universe.studio.nebula.bungee.utils.CC;
 import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import net.md_5.bungee.api.CommandSender;
@@ -10,7 +9,13 @@ import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * @author DanielH131COL
@@ -19,8 +24,9 @@ import java.util.List;
  * @file HelpopCommand
  */
 public class HelpopCommand extends Command {
-
     private final BungeePlugin plugin;
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public HelpopCommand(BungeePlugin plugin) {
         super("helpop", null, "ayuda");
@@ -66,5 +72,30 @@ public class HelpopCommand extends Command {
                 onlinePlayer.sendMessage(staffText);
             }
         }
+
+        String webhookUrl = ConfigManager.getConfig().getString("webhooks.helpop", "");
+        if (!webhookUrl.isEmpty() && !webhookUrl.contains("REPLACES")) {
+            String discordMessage = String.join("\n", staffMessages)
+                    .replace("%player%", player.getName())
+                    .replace("%server%", server)
+                    .replace("%message%", message);
+            sendWebhook(webhookUrl, discordMessage);
+        }
+    }
+
+    private void sendWebhook(String url, String content) {
+        executor.submit(() -> {
+            try {
+                String json = "{\"content\": \"" + content.replace("\"", "\\\"") + "\"}";
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (Exception e) {
+                plugin.getLogger().warning("Error sending helpop webhook: " + e.getMessage());
+            }
+        });
     }
 }

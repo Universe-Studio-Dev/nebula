@@ -10,7 +10,13 @@ import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
 
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
 /**
@@ -20,11 +26,12 @@ import java.util.stream.Collectors;
  * @file ReportCommand
  */
 public class ReportCommand extends Command implements TabExecutor {
-
     private final BungeePlugin plugin;
+    private final ExecutorService executor = Executors.newCachedThreadPool();
+    private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public ReportCommand(BungeePlugin plugin) {
-        super("report", null, "reporte");
+        super("report", null, "reporte", "reportar");
         this.plugin = plugin;
     }
 
@@ -70,6 +77,16 @@ public class ReportCommand extends Command implements TabExecutor {
                 onlinePlayer.sendMessage(staffText);
             }
         }
+
+        String webhookUrl = ConfigManager.getConfig().getString("webhooks.report", "");
+        if (!webhookUrl.isEmpty() && !webhookUrl.contains("REPLACES")) {
+            String discordMessage = String.join("\n", staffMessages)
+                    .replace("%player%", player.getName())
+                    .replace("%reported_player%", reportedPlayer)
+                    .replace("%server%", server)
+                    .replace("%message%", message);
+            sendWebhook(webhookUrl, discordMessage);
+        }
     }
 
     @Override
@@ -87,5 +104,21 @@ public class ReportCommand extends Command implements TabExecutor {
         }
 
         return List.of();
+    }
+
+    private void sendWebhook(String url, String content) {
+        executor.submit(() -> {
+            try {
+                String json = "{\"content\": \"" + content.replace("\"", "\\\"") + "\"}";
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(URI.create(url))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(json))
+                        .build();
+                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
+            } catch (Exception e) {
+                plugin.getLogger().warning("Error sending report webhook: " + e.getMessage());
+            }
+        });
     }
 }
