@@ -4,6 +4,12 @@ hub:
   - "Lobby3"
 hub-kick: "&aYou have been redirected to the %hub% because the previous server has shut down."
 
+webhooks:
+  # Webhook URL for reports (channel where /report reports arrive)
+  report: "https://discord.com/api/webhooks/REEMPLAZA_CON_TU_URL_REPORTES"
+  # Webhook URL for helpop (channel where /helpop messages arrive)
+  helpop: "https://discord.com/api/webhooks/REEMPLAZA_CON_TU_URL_HELPOP"
+
 captcha:
   enabled: true
   server: "captcha"
