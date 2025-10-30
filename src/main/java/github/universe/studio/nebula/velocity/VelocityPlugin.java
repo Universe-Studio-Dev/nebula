@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-@Plugin(id = "nebula", name = "Nebula", version = "1.6", authors = {"Universe Studio"})
+@Plugin(id = "nebula", name = "Nebula", version = "1.7", authors = {"Universe Studio"})
 public class VelocityPlugin {
 
     private final ProxyServer server;
@@ -62,7 +62,7 @@ public class VelocityPlugin {
 
         cc.console("&b&lNEBULA (ProxyCore)");
         cc.console("       &a&lENABLED");
-        cc.console(" (Version: &b1.6)");
+        cc.console(" (Version: &b1.7)");
         cc.console(" (Author: &bUniverse Studio)");
         cc.console(" (Discord: &bhttps://discord.gg/jGKm94fMAk)");
         cc.console("");

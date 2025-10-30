@@ -4,7 +4,7 @@
   <groupId>github.universe.studio.nebula</groupId>
   <artifactId>Nebula</artifactId>
   <name>Nebula</name>
-  <version>1.6</version>
+  <version>1.7</version>
   <build>
     <plugins>
       <plugin>
