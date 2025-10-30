@@ -5,6 +5,7 @@ import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
 import github.universe.studio.nebula.velocity.others.FriendManager;
 import github.universe.studio.nebula.velocity.utils.CC;
+import github.universe.studio.nebula.velocity.utils.ConfigManager;
 import net.kyori.adventure.text.Component;
 
 import java.util.Arrays;
@@ -30,6 +31,13 @@ public class FriendCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         if (!(invocation.source() instanceof Player)) {
             invocation.source().sendMessage(CC.translateToComponent("<red>This command is for players only!"));
             return;
@@ -172,5 +180,9 @@ public class FriendCommand implements SimpleCommand {
     @Override
     public boolean hasPermission(Invocation invocation) {
         return true;
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "friend").getBoolean(true);
     }
 }

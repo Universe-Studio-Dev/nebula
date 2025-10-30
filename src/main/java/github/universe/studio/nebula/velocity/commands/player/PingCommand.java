@@ -25,6 +25,13 @@ public class PingCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -56,5 +63,9 @@ public class PingCommand implements SimpleCommand {
                     CC.translate(ConfigManager.getMessages().node("messages", "ping").getString("&a%player%'s ping: %ping%ms").replace("%ping%", String.valueOf(ping)).replace("%player%", target.getUsername()))
             ));
         }
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "ping").getBoolean(true);
     }
 }

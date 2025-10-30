@@ -10,7 +10,6 @@ import github.universe.studio.nebula.velocity.utils.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.spongepowered.configurate.ConfigurationNode;
 import org.spongepowered.configurate.serialize.SerializationException;
 
 import java.net.URI;
@@ -19,9 +18,9 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.stream.Collectors;
 
 /**
  * @author DanielH131COL
@@ -42,17 +41,20 @@ public class ReportCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            sendDisabledMessage(invocation.source());
+            return;
+        }
+
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
-        if (!(sender instanceof Player)) {
+        if (!(sender instanceof Player player)) {
             sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
                     CC.translate(ConfigManager.getMessages().node("messages", "no-console").getString("&cThis command is for players only"))
             ));
             return;
         }
-
-        Player player = (Player) sender;
 
         if (args.length < 2) {
             player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
@@ -76,9 +78,11 @@ public class ReportCommand implements SimpleCommand {
         } catch (SerializationException e) {
             throw new RuntimeException(e);
         }
+
         Component staffText = Component.empty();
         for (String line : staffMessages) {
-            String formattedLine = CC.translate(line.replace("%player%", player.getUsername())
+            String formattedLine = CC.translate(line
+                    .replace("%player%", player.getUsername())
                     .replace("%reported_player%", reportedPlayer)
                     .replace("%server%", serverName)
                     .replace("%message%", message));
@@ -108,6 +112,11 @@ public class ReportCommand implements SimpleCommand {
 
     @Override
     public List<String> suggest(Invocation invocation) {
+        if (!isEnabled()) {
+            sendDisabledMessage(invocation.source());
+            return List.of();
+        }
+
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -139,5 +148,13 @@ public class ReportCommand implements SimpleCommand {
             } catch (Exception ignored) {
             }
         });
+    }
+
+    private void sendDisabledMessage(CommandSource source) {
+        source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(null));
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "report").getBoolean(true);
     }
 }

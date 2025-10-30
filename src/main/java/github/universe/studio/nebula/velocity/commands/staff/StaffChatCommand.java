@@ -30,6 +30,13 @@ public class StaffChatCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
 
         if (!(sender instanceof Player)) {
@@ -60,5 +67,9 @@ public class StaffChatCommand implements SimpleCommand {
                     CC.translate(ConfigManager.getMessages().node("messages", "staffchat-on").getString("&aStaff chat enabled"))
             ));
         }
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "staffchat").getBoolean(true);
     }
 }

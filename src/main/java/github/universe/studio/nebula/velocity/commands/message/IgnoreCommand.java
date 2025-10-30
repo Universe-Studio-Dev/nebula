@@ -32,6 +32,13 @@ public class IgnoreCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -169,5 +176,9 @@ public class IgnoreCommand implements SimpleCommand {
         player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(CC.translate(" &f⇨ &7/ignore add <player> &f- Ignore messages from a player")));
         player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(CC.translate(" &f⇨ &7/ignore remove <player> &f- Stop ignoring a player")));
         player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(CC.translate(" &f⇨ &7/ignore list &f- List all ignored players")));
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "ignore").getBoolean(true);
     }
 }

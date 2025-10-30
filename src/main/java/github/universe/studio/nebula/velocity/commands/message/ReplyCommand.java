@@ -28,6 +28,13 @@ public class ReplyCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -102,5 +109,9 @@ public class ReplyCommand implements SimpleCommand {
         } catch (SerializationException e) {
             return Collections.emptyList();
         }
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "reply").getBoolean(true);
     }
 }

@@ -34,6 +34,13 @@ public class HubCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -88,5 +95,9 @@ public class HubCommand implements SimpleCommand {
         player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
                 CC.translate(ConfigManager.getMessages().node("hub", "sending-hub").getString("&aSending you to %hub%").replace("%hub%", hubName))
         ));
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "hub").getBoolean(true);
     }
 }

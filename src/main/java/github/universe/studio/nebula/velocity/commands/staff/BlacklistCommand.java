@@ -29,6 +29,13 @@ public class BlacklistCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -140,5 +147,9 @@ public class BlacklistCommand implements SimpleCommand {
         }
 
         return List.of();
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "blacklist").getBoolean(true);
     }
 }

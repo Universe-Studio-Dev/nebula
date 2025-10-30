@@ -38,6 +38,13 @@ public class InfoCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
+        if (!isEnabled()) {
+            invocation.source().sendMessage(
+                    net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer.legacyAmpersand()
+                            .deserialize(null)
+            );
+            return;
+        }
         CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
 
@@ -154,5 +161,9 @@ public class InfoCommand implements SimpleCommand {
         minutos %= 60;
         segundos %= 60;
         return String.format("%02dh %02dm %02ds", horas, minutos, segundos);
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().node("commands", "info").getBoolean(true);
     }
 }

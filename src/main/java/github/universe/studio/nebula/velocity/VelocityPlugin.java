@@ -2,6 +2,7 @@ package github.universe.studio.nebula.velocity;
 
 import com.google.inject.Inject;
 import com.velocitypowered.api.command.CommandManager;
+import com.velocitypowered.api.command.CommandMeta;
 import com.velocitypowered.api.event.Subscribe;
 import com.velocitypowered.api.event.proxy.ProxyInitializeEvent;
 import com.velocitypowered.api.plugin.Plugin;
@@ -21,12 +22,7 @@ import github.universe.studio.nebula.velocity.commands.staff.BlacklistCommand;
 import github.universe.studio.nebula.velocity.commands.staff.InfoCommand;
 import github.universe.studio.nebula.velocity.commands.staff.MaintenanceCommand;
 import github.universe.studio.nebula.velocity.commands.staff.StaffChatCommand;
-import github.universe.studio.nebula.velocity.listeners.Announcer;
-import github.universe.studio.nebula.velocity.listeners.FriendListener;
-import github.universe.studio.nebula.velocity.listeners.GeneralListeners;
-import github.universe.studio.nebula.velocity.listeners.MotdListener;
-import github.universe.studio.nebula.velocity.listeners.StaffChatListener;
-import github.universe.studio.nebula.velocity.listeners.ChatCaptchaListener;
+import github.universe.studio.nebula.velocity.listeners.*;
 import github.universe.studio.nebula.velocity.others.CaptchaManager;
 import github.universe.studio.nebula.velocity.others.FriendManager;
 import github.universe.studio.nebula.velocity.utils.CC;
@@ -35,12 +31,6 @@ import org.slf4j.Logger;
 
 import java.nio.file.Path;
 
-/**
- * @author DanielH131COL
- * @created 04/09/2025
- * @project nebula
- * @file VelocityPlugin
- */
 @Plugin(id = "nebula", name = "Nebula", version = "1.6", authors = {"Universe Studio"})
 public class VelocityPlugin {
 
@@ -62,14 +52,6 @@ public class VelocityPlugin {
         this.dataDirectory = dataDirectory;
     }
 
-    public Path getDataDirectory() {
-        return dataDirectory;
-    }
-
-    public Logger getLogger() {
-        return logger;
-    }
-
     @Subscribe
     public void onProxyInitialization(ProxyInitializeEvent event) {
         Nebula.initVelocity(this);
@@ -78,52 +60,87 @@ public class VelocityPlugin {
         ConfigManager.init(this);
         ConfigManager.load();
 
-        cc.console("&b&lNEBULA &7⇨ &fProxyCore");
+        cc.console("&b&lNEBULA (ProxyCore)");
         cc.console("       &a&lENABLED");
-        cc.console(" &7⇨ &fVersion: &b1.6");
-        cc.console(" &7⇨ &fAuthor: &bUniverse Studio");
-        cc.console(" &7⇨ &fDiscord: &bhttps://discord.gg/jGKm94fMAk");
+        cc.console(" (Version: &b1.6)");
+        cc.console(" (Author: &bUniverse Studio)");
+        cc.console(" (Discord: &bhttps://discord.gg/jGKm94fMAk)");
         cc.console("");
-        cc.console(" &bThis plugin will be free until a limited version,");
-        cc.console(" &bso take advantage.");
+        cc.console(" (This plugin will be free until a limited version,)");
+        cc.console(" (so take advantage.)");
         cc.console("");
 
         announcer = new Announcer(this, server, cc);
         staffChatListener = new StaffChatListener(this, server, cc);
+        var config = ConfigManager.getConfig();
+        boolean captchaEnabled = config.node("captcha", "enabled").getBoolean(true);
+        String captchaServer = config.node("captcha", "server").getString("captcha");
+        String lobbyServer = config.node("captcha", "lobby").getString("lobby");
+        captchaManager = new CaptchaManager(captchaEnabled, captchaServer, lobbyServer, server, this);
         friendManager = new FriendManager(configManager, server);
-        captchaManager = new CaptchaManager(true, "captcha", "lobby", server, this);
-        GeneralListeners generalListeners = new GeneralListeners(this, server, cc, pluginContainer);
-        MotdListener motdListener = new MotdListener(this, server, cc);
-        FriendListener friendListener = new FriendListener(friendManager);
-        ChatCaptchaListener captchaListener = new ChatCaptchaListener(captchaManager, server, this);
 
-        server.getEventManager().register(this, generalListeners);
-        server.getEventManager().register(this, motdListener);
+        server.getEventManager().register(this, new GeneralListeners(this, server, cc, pluginContainer));
+        server.getEventManager().register(this, new MotdListener(this, server, cc));
         server.getEventManager().register(this, staffChatListener);
-        server.getEventManager().register(this, friendListener);
-        server.getEventManager().register(this, captchaListener);
+        server.getEventManager().register(this, new FriendListener(friendManager));
+        server.getEventManager().register(this, new ChatCaptchaListener(captchaManager, server, this));
 
         friendManager.loadFriends();
         announcer.start();
 
         CommandManager commandManager = server.getCommandManager();
-        commandManager.register(commandManager.metaBuilder("ignore").aliases("ignorar").build(), new IgnoreCommand(server));
-        commandManager.register(commandManager.metaBuilder("msg").aliases("tell", "w", "mensaje").build(), new MsgCommand(server));
-        commandManager.register(commandManager.metaBuilder("reply").aliases("r", "responder").build(), new ReplyCommand(server));
-        commandManager.register(commandManager.metaBuilder("helpop").aliases("ayuda").build(), new HelpopCommand(this, server));
-        commandManager.register(commandManager.metaBuilder("hub").aliases("lobby").build(), new HubCommand(this, server));
-        commandManager.register(commandManager.metaBuilder("ping").build(), new PingCommand(server));
-        commandManager.register(commandManager.metaBuilder("report").aliases("reporte").build(), new ReportCommand(this, server));
-        commandManager.register(commandManager.metaBuilder("blacklist").build(), new BlacklistCommand(server));
-        commandManager.register(commandManager.metaBuilder("info").aliases("whois").build(), new InfoCommand(server));
-        commandManager.register(commandManager.metaBuilder("maintenance").aliases("mantenimiento").build(), new MaintenanceCommand(this, server));
-        commandManager.register(commandManager.metaBuilder("sc").aliases("staffchat").build(), new StaffChatCommand(this, staffChatListener));
-        commandManager.register(commandManager.metaBuilder("nebula").aliases("n").build(), new NebulaCommand(this, server, announcer, pluginContainer));
-        commandManager.register(commandManager.metaBuilder("stream").build(), new StreamCommand(this, server));
-        commandManager.register(commandManager.metaBuilder("friend").aliases("friends", "amigos", "amigo", "frd").build(), new FriendCommand(friendManager, server));
+
+        registerCommand(commandManager, "ignore", "ignorar");
+        registerCommand(commandManager, "msg", "tell", "w", "mensaje");
+        registerCommand(commandManager, "reply", "r", "responder");
+        registerCommand(commandManager, "helpop", "ayuda");
+        registerCommand(commandManager, "hub", "lobby");
+        registerCommand(commandManager, "ping");
+        registerCommand(commandManager, "report", "reporte");
+        registerCommand(commandManager, "blacklist");
+        registerCommand(commandManager, "info", "whois");
+        registerCommand(commandManager, "maintenance", "mantenimiento");
+        registerCommand(commandManager, "sc", "staffchat");
+        registerCommand(commandManager, "nebula", "n");
+        registerCommand(commandManager, "stream");
+        registerCommand(commandManager, "friend", "friends", "amigos", "amigo", "frd");
     }
 
-    public CaptchaManager getCaptchaManager() {
-        return captchaManager;
+    private void registerCommand(CommandManager manager, String name, String... aliases) {
+        if (!isCommandEnabled(name)) return;
+
+        CommandMeta meta = manager.metaBuilder(name)
+                .aliases(aliases)
+                .build();
+
+        manager.register(meta, getCommandInstance(name));
     }
+
+    private com.velocitypowered.api.command.Command getCommandInstance(String name) {
+        return switch (name.toLowerCase()) {
+            case "ignore" -> new IgnoreCommand(server);
+            case "msg" -> new MsgCommand(server);
+            case "reply" -> new ReplyCommand(server);
+            case "helpop" -> new HelpopCommand(this, server);
+            case "hub" -> new HubCommand(this, server);
+            case "ping" -> new PingCommand(server);
+            case "report" -> new ReportCommand(this, server);
+            case "blacklist" -> new BlacklistCommand(server);
+            case "info" -> new InfoCommand(server);
+            case "maintenance" -> new MaintenanceCommand(this, server);
+            case "sc" -> new StaffChatCommand(this, staffChatListener);
+            case "nebula" -> new NebulaCommand(this, server, announcer, pluginContainer);
+            case "stream" -> new StreamCommand(this, server);
+            case "friend" -> new FriendCommand(friendManager, server);
+            default -> throw new IllegalArgumentException("Unknown command: " + name);
+        };
+    }
+
+    private boolean isCommandEnabled(String name) {
+        return ConfigManager.getConfig().node("commands", name).getBoolean(true);
+    }
+
+    public Path getDataDirectory() { return dataDirectory; }
+    public Logger getLogger() { return logger; }
+    public CaptchaManager getCaptchaManager() { return captchaManager; }
 }
