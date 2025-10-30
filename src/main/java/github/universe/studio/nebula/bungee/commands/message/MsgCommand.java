@@ -28,6 +28,10 @@ public class MsgCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!(sender instanceof ProxiedPlayer)) {
             sender.sendMessage(new TextComponent(CC.translate(
                     ConfigManager.getMessages().getString("messages.no-console", "&cThis command is for players only"))));
@@ -101,5 +105,9 @@ public class MsgCommand extends Command implements TabExecutor {
 
     private List<String> getIgnoreList(ProxiedPlayer player) {
         return ConfigManager.getConfig().getStringList("ignore." + player.getUniqueId().toString());
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.msg", true);
     }
 }

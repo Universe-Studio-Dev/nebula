@@ -43,3 +43,20 @@ motd:
   maintenance:
     line1: "&c&lMAINTENANCE MODE ENABLED"
     line2: "&7Please try again later."
+
+# All commands can be enabled/disabled here
+
+commands:
+  ignore: true
+  msg: true
+  reply: true
+  helpop: true
+  hub: true
+  ping: true
+  report: true
+  blacklist: true
+  info: true
+  maintenance: true
+  staffchat: true
+  friend: true
+  stream: true

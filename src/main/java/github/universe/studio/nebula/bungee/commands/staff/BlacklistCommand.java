@@ -28,6 +28,10 @@ public class BlacklistCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (args.length < 2) {
             sender.sendMessage(TextComponent.fromLegacyText(CC.translate(
                     ConfigManager.getMessages().getString("blacklist.usage-add"))));
@@ -110,5 +114,9 @@ public class BlacklistCommand extends Command implements TabExecutor {
         }
 
         return List.of();
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.blacklist", true);
     }
 }

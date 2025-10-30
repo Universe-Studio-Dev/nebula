@@ -17,14 +17,9 @@ import github.universe.studio.nebula.bungee.listeners.*;
 import github.universe.studio.nebula.bungee.others.*;
 import github.universe.studio.nebula.bungee.utils.CC;
 import github.universe.studio.nebula.bungee.utils.ConfigManager;
+import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.Plugin;
 
-/**
- * @author DanielH131COL
- * @created 04/09/2025
- * @project nebula
- * @file BungeePlugin
- */
 public class BungeePlugin extends Plugin {
 
     private static BungeePlugin instance;
@@ -43,18 +38,19 @@ public class BungeePlugin extends Plugin {
         Nebula.initBungee(this);
         instance = this;
 
-        CC.console("&b&lNEBULA &7⇨ &fProxyCore");
+        CC.console("&b&lNEBULA (ProxyCore)");
         CC.console("        &a&lENABLED");
-        CC.console(" &7⇨ &fVersion: &b" + getDescription().getVersion());
-        CC.console(" &7⇨ &fAuthor: &b" + getDescription().getAuthor());
-        CC.console(" &7⇨ &fDiscord: &bhttps://discord.gg/jGKm94fMAk");
+        CC.console(" (Version: &b" + getDescription().getVersion() + ")");
+        CC.console(" (Author: &b" + getDescription().getAuthor() + ")");
+        CC.console(" (Discord: &bhttps://discord.gg/jGKm94fMAk)");
         CC.console("");
-        CC.console(" &bThis plugin will be free until a limited version,");
-        CC.console(" &bso take advantage.");
+        CC.console(" (This plugin will be free until a limited version,)");
+        CC.console(" (so take advantage.)");
         CC.console("");
 
         configManager = new ConfigManager(this);
         configManager.load();
+
         announcer = new Announcer(this);
         announcer.start();
 
@@ -62,12 +58,7 @@ public class BungeePlugin extends Plugin {
         floodDetector = new GlobalFloodDetector(50, 5000);
         blacklistManager = new BlacklistManager(5 * 60 * 1000);
         nameValidator = new NameValidator();
-        captchaManager = new CaptchaManager(
-                configManager.getConfig().getBoolean("captcha.enabled", true),
-                configManager.getConfig().getString("captcha.server", "captcha"),
-                configManager.getConfig().getString("captcha.lobby", "lobby"),
-                this
-        );
+        captchaManager = new CaptchaManager(configManager.getConfig().getBoolean("captcha.enabled", true), configManager.getConfig().getString("captcha.server", "captcha"), configManager.getConfig().getString("captcha.lobby", "lobby"), this);
         friendManager = new FriendManager(configManager);
         friendManager.loadFriends();
 
@@ -78,28 +69,38 @@ public class BungeePlugin extends Plugin {
         getProxy().getPluginManager().registerListener(this, new MotdListener(this));
         getProxy().getPluginManager().registerListener(this, new FriendListener(friendManager));
 
-        getProxy().getPluginManager().registerCommand(this, new MsgCommand());
-        getProxy().getPluginManager().registerCommand(this, new ReplyCommand());
-        getProxy().getPluginManager().registerCommand(this, new IgnoreCommand());
-        getProxy().getPluginManager().registerCommand(this, new BlacklistCommand());
-        getProxy().getPluginManager().registerCommand(this, new NebulaCommand());
-        getProxy().getPluginManager().registerCommand(this, new PingCommand());
-        getProxy().getPluginManager().registerCommand(this, new InfoCommand());
-        getProxy().getPluginManager().registerCommand(this, new MaintenanceCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new HubCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new ReportCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new HelpopCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new StaffChatCommand(this, staffChatListener));
-        getProxy().getPluginManager().registerCommand(this, new StreamCommand(this));
-        getProxy().getPluginManager().registerCommand(this, new FriendCommand(friendManager));
+        registerIfEnabled("msg", new MsgCommand());
+        registerIfEnabled("reply", new ReplyCommand());
+        registerIfEnabled("ignore", new IgnoreCommand());
+        registerIfEnabled("blacklist", new BlacklistCommand());
+        registerIfEnabled("nebula", new NebulaCommand());
+        registerIfEnabled("ping", new PingCommand());
+        registerIfEnabled("info", new InfoCommand());
+        registerIfEnabled("maintenance", new MaintenanceCommand(this));
+        registerIfEnabled("hub", new HubCommand(this));
+        registerIfEnabled("report", new ReportCommand(this));
+        registerIfEnabled("helpop", new HelpopCommand(this));
+        registerIfEnabled("staffchat", new StaffChatCommand(this, staffChatListener));
+        registerIfEnabled("stream", new StreamCommand(this));
+        registerIfEnabled("friend", new FriendCommand(friendManager));
+    }
+
+    private void registerIfEnabled(String name, Command command) {
+        if (isCommandEnabled(name)) {
+            getProxy().getPluginManager().registerCommand(this, command);
+        }
+    }
+
+    private boolean isCommandEnabled(String name) {
+        return ConfigManager.getConfig().getBoolean("commands." + name, true);
     }
 
     @Override
     public void onDisable() {
-        CC.console("&b&lNEBULA &7⇨ &fProxyCore");
+        CC.console("&b&lNEBULA (ProxyCore)");
         CC.console("        &c&lDISABLED");
-        CC.console(" &7⇨ &fVersion: &b" + getDescription().getVersion());
-        CC.console(" &7⇨ &fAuthor: &b" + getDescription().getAuthor());
+        CC.console(" (Version: &b" + getDescription().getVersion() + ")");
+        CC.console(" (Author: &b" + getDescription().getAuthor() + ")");
         CC.console("");
 
         configManager.saveConfig();
@@ -109,31 +110,11 @@ public class BungeePlugin extends Plugin {
         announcer.stop();
     }
 
-    public static BungeePlugin getInstance() {
-        return instance;
-    }
-
-    public static ConfigManager getConfigManager() {
-        return instance.configManager;
-    }
-
-    public Announcer getAnnouncer() {
-        return announcer;
-    }
-
-    public StaffChatListener getStaffChatListener() {
-        return staffChatListener;
-    }
-
-    public GlobalFloodDetector getFloodDetector() {
-        return floodDetector;
-    }
-
-    public FriendManager getFriendManager() {
-        return friendManager;
-    }
-
-    public CaptchaManager getCaptchaManager() {
-        return captchaManager;
-    }
+    public static BungeePlugin getInstance() { return instance; }
+    public static ConfigManager getConfigManager() { return instance.configManager; }
+    public Announcer getAnnouncer() { return announcer; }
+    public StaffChatListener getStaffChatListener() { return staffChatListener; }
+    public GlobalFloodDetector getFloodDetector() { return floodDetector; }
+    public FriendManager getFriendManager() { return friendManager; }
+    public CaptchaManager getCaptchaManager() { return captchaManager; }
 }

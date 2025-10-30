@@ -6,6 +6,7 @@ import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import github.universe.studio.nebula.bungee.utils.ConnectionTracker;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 import net.md_5.bungee.api.plugin.TabExecutor;
@@ -34,6 +35,10 @@ public class InfoCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!(sender instanceof ProxiedPlayer player)) {
             sender.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.no-console")));
             return;
@@ -131,5 +136,9 @@ public class InfoCommand extends Command implements TabExecutor {
         minutos %= 60;
         segundos %= 60;
         return String.format("%02dh %02dm %02ds", horas, minutos, segundos);
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.info", true);
     }
 }

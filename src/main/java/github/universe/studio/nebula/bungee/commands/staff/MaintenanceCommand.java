@@ -30,6 +30,10 @@ public class MaintenanceCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!sender.hasPermission("nebula.admin")) {
             sender.sendMessage(TextComponent.fromLegacyText(CC.translate(
                     ConfigManager.getMessages().getString("messages.no-permission"))));
@@ -73,5 +77,9 @@ public class MaintenanceCommand extends Command implements TabExecutor {
         }
 
         return List.of();
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.maintenance", true);
     }
 }

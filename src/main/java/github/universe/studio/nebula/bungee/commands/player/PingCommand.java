@@ -4,6 +4,7 @@ import github.universe.studio.nebula.bungee.utils.CC;
 import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
+import net.md_5.bungee.api.chat.TextComponent;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.plugin.Command;
 
@@ -21,6 +22,10 @@ public class PingCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!(sender instanceof ProxiedPlayer)) {
             CC.console(ConfigManager.getMessages().getString("no-console"));
             return;
@@ -41,5 +46,9 @@ public class PingCommand extends Command {
             int ping = target.getPing();
             player.sendMessage(CC.translate(ConfigManager.getMessages().getString("messages.ping").replace("%ping%", String.valueOf(ping))));
         }
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.ping", true);
     }
 }

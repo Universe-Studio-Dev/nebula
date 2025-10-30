@@ -2,6 +2,7 @@ package github.universe.studio.nebula.bungee.commands;
 
 import github.universe.studio.nebula.bungee.others.FriendManager;
 import github.universe.studio.nebula.bungee.utils.CC;
+import github.universe.studio.nebula.bungee.utils.ConfigManager;
 import net.md_5.bungee.api.CommandSender;
 import net.md_5.bungee.api.ProxyServer;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
@@ -29,6 +30,10 @@ public class FriendCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!(sender instanceof ProxiedPlayer)) {
             sender.sendMessage(CC.translate("&cThis command is for players only!"));
             return;
@@ -145,5 +150,9 @@ public class FriendCommand extends Command implements TabExecutor {
         }
 
         return Arrays.asList();
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.friend", true);
     }
 }

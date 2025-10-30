@@ -30,6 +30,10 @@ public class StaffChatCommand extends Command {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!(sender instanceof ProxiedPlayer)) {
             sender.sendMessage(new TextComponent(CC.translate(ConfigManager.getMessages().getString("messages.no-console"))));
             return;
@@ -50,5 +54,9 @@ public class StaffChatCommand extends Command {
             listener.getToggledPlayers().add(uuid);
             player.sendMessage(new TextComponent(CC.translate(ConfigManager.getMessages().getString("messages.staffchat-on"))));
         }
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.staffchat", true);
     }
 }

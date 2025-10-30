@@ -32,6 +32,10 @@ public class IgnoreCommand extends Command implements TabExecutor {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+        if (!isEnabled()) {
+            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
+            return;
+        }
         if (!(sender instanceof ProxiedPlayer)) {
             sender.sendMessage(new TextComponent(CC.translate(
                     ConfigManager.getMessages().getString("messages.no-console", "&cThis command is for players only"))));
@@ -158,5 +162,9 @@ public class IgnoreCommand extends Command implements TabExecutor {
         player.sendMessage(new TextComponent(CC.translate(" &f⇨ &7/ignore add <player> &f- Ignore messages from a player")));
         player.sendMessage(new TextComponent(CC.translate(" &f⇨ &7/ignore remove <player> &f- Stop ignoring a player")));
         player.sendMessage(new TextComponent(CC.translate(" &f⇨ &7/ignore list &f- List all ignored players")));
+    }
+
+    private boolean isEnabled() {
+        return ConfigManager.getConfig().getBoolean("commands.ignore", true);
     }
 }
