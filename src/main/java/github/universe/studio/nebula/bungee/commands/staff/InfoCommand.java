@@ -36,7 +36,6 @@ public class InfoCommand extends Command implements TabExecutor {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (!isEnabled()) {
-            sender.sendMessage(new TextComponent(CC.translate("&cThis command is disabled.")));
             return;
         }
         if (!(sender instanceof ProxiedPlayer player)) {
