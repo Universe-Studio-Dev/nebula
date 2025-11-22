@@ -5,8 +5,8 @@ hub:
 hub-kick: "&aYou have been redirected to the %hub% because the previous server has shut down."
 
 webhooks:
-  report: "https://discord.com/api/webhooks/REEMPLAZA_CON_TU_URL_REPORTES"
-  helpop: "https://discord.com/api/webhooks/REEMPLAZA_CON_TU_URL_HELPOP"
+  report: "https://discord.com/api/webhooks/REPLACE_WITH_YOUR_REPORTS_URL"
+  helpop: "https://discord.com/api/webhooks/REPLACE_WITH_YOUR_HELPOP_URL"
 
   # ─── DISCORD EMBED CUSTOMIZATION (fully editable) ───
   embed:
