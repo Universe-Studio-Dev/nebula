@@ -3,9 +3,9 @@ package github.universe.studio.nebula.velocity.utils;
 import com.velocitypowered.api.proxy.ProxyServer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
-import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 /**
@@ -17,6 +17,8 @@ import java.util.stream.Collectors;
 public class CC {
 
     private final ProxyServer server;
+
+    private static final Pattern STRIP_PATTERN = Pattern.compile("(?i)<[^>]*>|&[0-9A-FK-ORX]");
 
     public CC(ProxyServer server) {
         this.server = server;
@@ -39,5 +41,10 @@ public class CC {
     public void console(String text) {
         Component component = translateToComponent(text);
         server.getConsoleCommandSource().sendMessage(component);
+    }
+
+    public static String stripColors(String text) {
+        if (text == null || text.isEmpty()) return "";
+        return STRIP_PATTERN.matcher(text).replaceAll("");
     }
 }

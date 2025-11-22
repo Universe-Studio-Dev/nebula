@@ -1,6 +1,7 @@
 package github.universe.studio.nebula.velocity.commands.player;
 
-import com.velocitypowered.api.command.CommandSource;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import com.velocitypowered.api.command.SimpleCommand;
 import com.velocitypowered.api.proxy.Player;
 import com.velocitypowered.api.proxy.ProxyServer;
@@ -10,28 +11,21 @@ import github.universe.studio.nebula.velocity.utils.ConfigManager;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
-import org.spongepowered.configurate.serialize.SerializationException;
+import org.spongepowered.configurate.ConfigurationNode;
 
-import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-import java.util.ArrayList;
+import java.time.Instant;
+import java.util.Arrays;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 
-/**
- * @author DanielH131COL
- * @created 04/09/2025
- * @project nebula
- * @file ReportCommand
- */
 public class ReportCommand implements SimpleCommand {
+
     private final VelocityPlugin plugin;
     private final ProxyServer server;
-    private final ExecutorService executor = Executors.newCachedThreadPool();
     private final HttpClient httpClient = HttpClient.newHttpClient();
 
     public ReportCommand(VelocityPlugin plugin, ProxyServer server) {
@@ -41,120 +35,147 @@ public class ReportCommand implements SimpleCommand {
 
     @Override
     public void execute(Invocation invocation) {
-        if (!isEnabled()) {
-            sendDisabledMessage(invocation.source());
+        if (!ConfigManager.getConfig().node("commands", "report").getBoolean(true)) return;
+
+        if (!(invocation.source() instanceof Player player)) {
+            invocation.source().sendMessage(
+                    LegacyComponentSerializer.legacyAmpersand().deserialize(
+                            CC.translate(ConfigManager.getMessages().node("messages", "no-console").getString("&cOnly players can use this command."))
+                    )
+            );
             return;
         }
 
-        CommandSource sender = invocation.source();
         String[] args = invocation.arguments();
-
-        if (!(sender instanceof Player player)) {
-            sender.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    CC.translate(ConfigManager.getMessages().node("messages", "no-console").getString("&cThis command is for players only"))
-            ));
-            return;
-        }
-
         if (args.length < 2) {
-            player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(
-                    CC.translate(ConfigManager.getMessages().node("messages", "report-usage").getString("&cUsage: /report <player> <reason>"))
-            ));
+            player.sendMessage(
+                    LegacyComponentSerializer.legacyAmpersand().deserialize(
+                            CC.translate(ConfigManager.getMessages().node("messages", "report-usage").getString("&cUsage: /report <player> <reason>"))
+                    )
+            );
             return;
         }
 
-        String reportedPlayer = args[0];
-        String message = String.join(" ", java.util.Arrays.copyOfRange(args, 1, args.length));
+        String reported = args[0];
+        String reason = String.join(" ", Arrays.copyOfRange(args, 1, args.length));
         String serverName = player.getCurrentServer().map(s -> s.getServerInfo().getName()).orElse("Unknown");
 
-        String playerMessage = CC.translate(ConfigManager.getMessages().node("messages", "report-sent").getString("&aReport sent for %reported_player%: %message%")
-                .replace("%reported_player%", reportedPlayer)
-                .replace("%message%", message));
-        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(playerMessage));
+        String playerMsg = ConfigManager.getMessages().node("messages", "report-sent")
+                .getString("&aReport sent.")
+                .replace("%reported_player%", reported)
+                .replace("%message%", reason);
+        player.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(CC.translate(playerMsg)));
 
-        List<String> staffMessages;
+        List<String> staffLines;
         try {
-            staffMessages = ConfigManager.getMessages().node("messages", "report-received").getList(String.class, new ArrayList<>());
-        } catch (SerializationException e) {
-            throw new RuntimeException(e);
+            staffLines = ConfigManager.getMessages().node("messages", "report-received")
+                    .getList(String.class, List.of());
+        } catch (Exception e) {
+            staffLines = List.of("&cError loading report message.");
         }
 
-        Component staffText = Component.empty();
-        for (String line : staffMessages) {
-            String formattedLine = CC.translate(line
+        final String finalServerName = serverName;
+        Component staffComponent = Component.empty();
+        for (String line : staffLines) {
+            String formatted = CC.translate(line
                     .replace("%player%", player.getUsername())
-                    .replace("%reported_player%", reportedPlayer)
+                    .replace("%reported_player%", reported)
                     .replace("%server%", serverName)
-                    .replace("%message%", message));
-            Component lineComponent = LegacyComponentSerializer.legacyAmpersand().deserialize(formattedLine);
+                    .replace("%message%", reason));
+            Component part = LegacyComponentSerializer.legacyAmpersand().deserialize(formatted);
             if (!serverName.equals("Unknown")) {
-                lineComponent = lineComponent.clickEvent(ClickEvent.runCommand("/server " + serverName));
+                part = part.clickEvent(ClickEvent.runCommand("/server " + finalServerName));
             }
-            staffText = staffText.append(lineComponent).append(Component.newline());
+            staffComponent = staffComponent.append(part).append(Component.newline());
         }
 
-        for (Player onlinePlayer : server.getAllPlayers()) {
-            if (onlinePlayer.hasPermission("nebula.staff")) {
-                onlinePlayer.sendMessage(staffText);
-            }
+        Component finalStaffComponent = staffComponent;
+        server.getAllPlayers().stream()
+                .filter(p -> p.hasPermission("nebula.staff"))
+                .forEach(p -> p.sendMessage(finalStaffComponent));
+
+        String url = ConfigManager.getConfig().node("webhooks", "report").getString("");
+        if (!url.isEmpty() && !url.contains("REPLACES")) {
+            sendDiscordEmbed("report", player.getUsername(), player.getUniqueId().toString(), serverName, reason, reported);
+        }
+    }
+
+    private void sendDiscordEmbed(String type, String playerName, String uuid, String server, String message, String reported) {
+        String url = ConfigManager.getConfig().node("webhooks", type).getString("");
+        if (url.isEmpty() || url.contains("REPLACES")) return;
+
+        ConfigurationNode section = ConfigManager.getConfig().node("webhooks", "embed", type);
+        if (section.virtual()) return;
+
+        final String finalServer = server;
+
+        JsonObject embed = new JsonObject();
+        embed.addProperty("title", section.node("title").getString("New Report"));
+        embed.addProperty("color", section.node("color").getInt(15158332));
+        embed.addProperty("timestamp", Instant.now().toString());
+
+        String footer = section.node("footer").getString("");
+        if (!footer.isEmpty()) {
+            JsonObject f = new JsonObject();
+            f.addProperty("text", footer);
+            embed.add("footer", f);
         }
 
-        String webhookUrl = ConfigManager.getConfig().node("webhooks", "report").getString("");
-        if (!webhookUrl.isEmpty() && !webhookUrl.contains("REPLACES")) {
-            String discordMessage = String.join("\n", staffMessages)
-                    .replace("%player%", player.getUsername())
-                    .replace("%reported_player%", reportedPlayer)
-                    .replace("%server%", serverName)
-                    .replace("%message%", message);
-            sendWebhook(webhookUrl, discordMessage);
+        String thumb = section.node("thumbnail").getString("").replace("%uuid%", uuid);
+        if (!thumb.isEmpty()) {
+            JsonObject t = new JsonObject();
+            t.addProperty("url", thumb);
+            embed.add("thumbnail", t);
         }
+
+        JsonArray fields = new JsonArray();
+        try {
+            List<? extends ConfigurationNode> fieldNodes = section.node("fields").childrenList();
+            for (ConfigurationNode node : fieldNodes) {
+                JsonObject field = new JsonObject();
+                field.addProperty("name", node.node("name").getString(""));
+
+                String value = node.node("value").getString("")
+                        .replace("%player%", playerName)
+                        .replace("%uuid%", uuid)
+                        .replace("%server%", finalServer)
+                        .replace("%message%", message);
+                if (reported != null) {
+                    value = value.replace("%reported_player%", reported);
+                }
+
+                field.addProperty("value", CC.stripColors(value));
+                field.addProperty("inline", node.node("inline").getBoolean(false));
+                fields.add(field);
+            }
+        } catch (Exception ignored) {}
+
+        embed.add("fields", fields);
+
+        JsonObject payload = new JsonObject();
+        JsonArray embeds = new JsonArray();
+        embeds.add(embed);
+        payload.add("embeds", embeds);
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                HttpRequest request = HttpRequest.newBuilder()
+                        .uri(java.net.URI.create(url))
+                        .header("Content-Type", "application/json")
+                        .POST(HttpRequest.BodyPublishers.ofString(payload.toString()))
+                        .build();
+                httpClient.send(request, HttpResponse.BodyHandlers.discarding());
+            } catch (Exception ignored) {}
+        });
     }
 
     @Override
     public List<String> suggest(Invocation invocation) {
-        if (!isEnabled()) {
-            sendDisabledMessage(invocation.source());
-            return List.of();
-        }
-
-        CommandSource sender = invocation.source();
-        String[] args = invocation.arguments();
-
-        if (!(sender instanceof Player)) {
-            return List.of();
-        }
-
-        if (args.length == 1) {
-            String partial = args[0].toLowerCase();
-            return server.getAllPlayers().stream()
-                    .map(Player::getUsername)
-                    .filter(name -> name.toLowerCase().startsWith(partial))
-                    .collect(Collectors.toList());
-        }
-
-        return List.of();
-    }
-
-    private void sendWebhook(String url, String content) {
-        executor.submit(() -> {
-            try {
-                String json = "{\"content\": \"" + content.replace("\"", "\\\"") + "\"}";
-                HttpRequest request = HttpRequest.newBuilder()
-                        .uri(URI.create(url))
-                        .header("Content-Type", "application/json")
-                        .POST(HttpRequest.BodyPublishers.ofString(json))
-                        .build();
-                httpClient.send(request, HttpResponse.BodyHandlers.ofString());
-            } catch (Exception ignored) {
-            }
-        });
-    }
-
-    private void sendDisabledMessage(CommandSource source) {
-        source.sendMessage(LegacyComponentSerializer.legacyAmpersand().deserialize(null));
-    }
-
-    private boolean isEnabled() {
-        return ConfigManager.getConfig().node("commands", "report").getBoolean(true);
+        if (invocation.arguments().length != 1) return List.of();
+        String partial = invocation.arguments()[0].toLowerCase();
+        return server.getAllPlayers().stream()
+                .map(Player::getUsername)
+                .filter(name -> name.toLowerCase().startsWith(partial))
+                .collect(Collectors.toList());
     }
 }

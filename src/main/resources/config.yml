@@ -5,10 +5,45 @@ hub:
 hub-kick: "&aYou have been redirected to the %hub% because the previous server has shut down."
 
 webhooks:
-  # Webhook URL for reports (channel where /report reports arrive)
   report: "https://discord.com/api/webhooks/REEMPLAZA_CON_TU_URL_REPORTES"
-  # Webhook URL for helpop (channel where /helpop messages arrive)
   helpop: "https://discord.com/api/webhooks/REEMPLAZA_CON_TU_URL_HELPOP"
+
+  # ─── DISCORD EMBED CUSTOMIZATION (fully editable) ───
+  embed:
+    helpop:
+      color: 16763904                    # Orange
+      title: "New Help Request"
+      thumbnail: "https://crafatar.com/avatars/%uuid%?overlay=true"  # Optional: player head
+      footer: "Helpop System • Nebula Network"
+      fields:
+        - name: "Player"
+          value: "%player%"
+          inline: true
+        - name: "Server"
+          value: "%server%"
+          inline: true
+        - name: "Message"
+          value: "%message%"
+          inline: false
+
+    report:
+      color: 15158332                    # Red
+      title: "New Report"
+      thumbnail: "https://crafatar.com/avatars/%uuid%?overlay=true"  # Reporter's head
+      footer: "Report System • Nebula Network"
+      fields:
+        - name: "Reported by"
+          value: "%player%"
+          inline: true
+        - name: "Target"
+          value: "%reported_player%"
+          inline: true
+        - name: "Server"
+          value: "%server%"
+          inline: true
+        - name: "Reason"
+          value: "%message%"
+          inline: false
 
 captcha:
   enabled: true
