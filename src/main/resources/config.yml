@@ -83,7 +83,7 @@ modules:
   friends: true
   staffchat: true
   messages: true
-  antibot: false
+  antibot: true
   social: true
   actions: true
 
