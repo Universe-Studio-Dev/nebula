@@ -79,6 +79,27 @@ motd:
     line1: "&c&lMAINTENANCE MODE ENABLED"
     line2: "&7Please try again later."
 
+modules:
+  friends: true
+  staffchat: true
+  messages: true
+  antibot: false
+  social: true
+  actions: true
+
+actions:
+  on-join:
+    - title: "&bWelcome %player%"
+    - sound: ENTITY_PLAYER_LEVELUP
+    - message: "&7Server: &f%server%"
+    - bossbar: "&aConnected to the network"
+  on-server-switch:
+    - actionbar: "&eEntering %server%"
+
+antibot:
+  flood-threshold: 100
+  lockdown-time: 300 # seconds
+
 # All commands can be enabled/disabled here
 
 commands:
